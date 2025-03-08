@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +8,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         :root {
+            /* Variables para el tema claro */
             --primary: #007bff;
             --secondary: #6c757d;
             --success: #28a745;
@@ -16,12 +17,33 @@
             --bg-light: #f4f4f4;
             --bg-white: #fff;
             --text-dark: #333;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-color: #eee;
+            --table-row-hover: rgba(0, 123, 255, 0.05);
+            --table-row-even: rgba(0, 0, 0, 0.02);
+        }
+
+        /* Variables para el tema oscuro */
+        html[data-theme='dark'] {
+            --primary: #1e90ff;
+            --secondary: #8c8c8c;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #d4a017;
+            --bg-light: #1e1e1e;
+            --bg-white: #2d2d2d;
+            --text-dark: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --border-color: #444;
+            --table-row-hover: rgba(30, 144, 255, 0.15);
+            --table-row-even: rgba(255, 255, 255, 0.05);
         }
         
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         body {
@@ -45,18 +67,43 @@
             text-align: center;
             margin-bottom: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
+            position: relative;
         }
         
         header h1 {
             margin: 0;
             font-size: 2rem;
         }
+
+        /* Selector de tema */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
         
         .card {
             background-color: var(--bg-white);
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             padding: 20px;
             margin-bottom: 30px;
         }
@@ -65,7 +112,7 @@
             color: var(--primary);
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .status-indicator {
@@ -84,7 +131,7 @@
         
         .waiting {
             background-color: var(--warning);
-            color: var(--text-dark);
+            color: var(--bg-light);
         }
         
         .processed {
@@ -101,7 +148,7 @@
         table th, table td {
             padding: 12px 15px;
             text-align: left;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
         
         table th {
@@ -111,11 +158,11 @@
         }
         
         table tr:nth-child(even) {
-            background-color: rgba(0, 0, 0, 0.02);
+            background-color: var(--table-row-even);
         }
         
         table tr:hover {
-            background-color: rgba(0, 123, 255, 0.05);
+            background-color: var(--table-row-hover);
         }
         
         .chart-container {
@@ -151,7 +198,7 @@
         
         .status-badge.waiting {
             background-color: var(--warning);
-            color: var(--text-dark);
+            color: var(--bg-light);
         }
         
         .status-badge.processed {
@@ -162,7 +209,7 @@
         .message-text {
             display: block;
             padding: 5px 10px;
-            background-color: #f8f9fa;
+            background-color: var(--bg-light);
             border-radius: 4px;
             margin: 3px 0;
             font-size: 14px;
@@ -197,6 +244,11 @@
             .chart-container {
                 height: 250px;
             }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+            }
         }
     </style>
 </head>
@@ -204,6 +256,7 @@
     <div class="container">
         <header>
             <h1>Panel de Control - Mensajes</h1>
+            <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">☀️</button>
         </header>
         
         <div class="card">
@@ -247,6 +300,45 @@
     </div>
     
     <script>
+        // Configuración del selector de tema
+        const htmlElement = document.documentElement;
+        const themeToggle = document.getElementById('theme-toggle');
+        
+        // Cargar tema guardado
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        htmlElement.setAttribute('data-theme', savedTheme);
+        updateThemeToggleIcon(savedTheme);
+        
+        // Función para alternar el tema
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = htmlElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            htmlElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            updateThemeToggleIcon(newTheme);
+            updateChartTheme(newTheme);
+        });
+        
+        function updateThemeToggleIcon(theme) {
+            themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        }
+        
+        function updateChartTheme(theme) {
+            if (chart) {
+                const isDark = theme === 'dark';
+                
+                chart.options.scales.x.ticks.color = isDark ? '#e0e0e0' : '#666';
+                chart.options.scales.y.ticks.color = isDark ? '#e0e0e0' : '#666';
+                chart.options.scales.x.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                chart.options.scales.y.grid.color = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                chart.options.plugins.legend.labels.color = isDark ? '#e0e0e0' : '#666';
+                
+                chart.update();
+            }
+        }
+
         // Datos simulados para el dashboard
         const simulatedData = {
             // Generar datos de mensajes por minuto (simulados)
@@ -307,7 +399,8 @@
         const ctx = document.getElementById('messageChart').getContext('2d');
         let chartData = simulatedData.generateMessagesPerMinute();
         
-        const chart = new Chart(ctx, {
+        // Configuración base del gráfico
+        const chartConfig = {
             type: 'line',
             data: {
                 labels: Array.from({length: 10}, (_, i) => `-${9-i} min`),
@@ -328,7 +421,10 @@
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        labels: {
+                            color: '#666'
+                        }
                     },
                     tooltip: {
                         mode: 'index',
@@ -340,18 +436,37 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Cantidad de mensajes'
+                            text: 'Cantidad de mensajes',
+                            color: '#666'
+                        },
+                        ticks: {
+                            color: '#666'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
                         }
                     },
                     x: {
                         title: {
                             display: true,
-                            text: 'Tiempo'
+                            text: 'Tiempo',
+                            color: '#666'
+                        },
+                        ticks: {
+                            color: '#666'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)'
                         }
                     }
                 }
             }
-        });
+        };
+        
+        const chart = new Chart(ctx, chartConfig);
+        
+        // Aplicar tema inicial al gráfico
+        updateChartTheme(savedTheme);
         
         // Actualizar la tabla de colas
         function updateQueueTable() {
