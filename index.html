@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Control - Mensajes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        :root {
+            --primary: #007bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --bg-light: #f4f4f4;
+            --bg-white: #fff;
+            --text-dark: #333;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        
+        .card {
+            background-color: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 10px 0;
+            border-radius: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .online {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .waiting {
+            background-color: var(--warning);
+            color: var(--text-dark);
+        }
+        
+        .processed {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        table th, table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        table th {
+            background-color: var(--secondary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        table tr:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+        
+        table tr:hover {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #0069d9;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-badge.waiting {
+            background-color: var(--warning);
+            color: var(--text-dark);
+        }
+        
+        .status-badge.processed {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .message-text {
+            display: block;
+            padding: 5px 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            margin: 3px 0;
+            font-size: 14px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            table th, table td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            .chart-container {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Panel de Control - Mensajes</h1>
+        </header>
+        
+        <div class="card">
+            <h2>Estado del Sistema</h2>
+            <div>
+                <span class="status-indicator online">Servicio Activo</span>
+                <p>Último mensaje recibido: <strong id="last-update">12:30:45 PM</strong></p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Mensajes por Minuto</h2>
+            <div class="chart-container">
+                <canvas id="messageChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Colas Activas</h2>
+            <button class="btn" id="refresh-btn">Actualizar datos</button>
+            <div id="queues-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Mensajes</th>
+                            <th>Estado</th>
+                            <th>Actualización</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queue-table">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>M5V Developments &copy; 2023 - Plataforma de Agrupación de Mensajes</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Datos simulados para el dashboard
+        const simulatedData = {
+            // Generar datos de mensajes por minuto (simulados)
+            generateMessagesPerMinute: function() {
+                return Array.from({length: 10}, () => Math.floor(Math.random() * 15) + 1);
+            },
+            
+            // Generar datos de colas (simulados)
+            generateQueues: function() {
+                const users = ['user123', 'user456', 'user789', 'user321', 'user654'];
+                const messageTemplates = [
+                    'Hola, ¿cómo estás?',
+                    'Necesito ayuda con mi pedido',
+                    'Quiero más información',
+                    '¿Cuál es el estado de mi envío?',
+                    'Gracias por su atención'
+                ];
+                
+                // Seleccionar algunos usuarios al azar para tener colas activas
+                const activeUsers = users.filter(() => Math.random() > 0.3);
+                
+                return activeUsers.map(userId => {
+                    // Generar entre 1 y 3 mensajes para cada usuario
+                    const messageCount = Math.floor(Math.random() * 3) + 1;
+                    const messages = [];
+                    
+                    for (let i = 0; i < messageCount; i++) {
+                        const randomMessageIndex = Math.floor(Math.random() * messageTemplates.length);
+                        const now = Date.now();
+                        const randomTimeOffset = Math.floor(Math.random() * 300000); // 5 minutos en milisegundos
+                        
+                        messages.push({
+                            text: messageTemplates[randomMessageIndex],
+                            timestamp: now - randomTimeOffset
+                        });
+                    }
+                    
+                    // 70% de probabilidad de estar en estado "Esperando"
+                    const status = Math.random() > 0.3 ? 'Esperando' : 'Procesado';
+                    
+                    return {
+                        userId,
+                        messages,
+                        status,
+                        timestamp: messages[messages.length - 1].timestamp
+                    };
+                });
+            }
+        };
+        
+        // Formatear fecha para mostrar
+        function formatDate(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString();
+        }
+        
+        // Configurar el gráfico
+        const ctx = document.getElementById('messageChart').getContext('2d');
+        let chartData = simulatedData.generateMessagesPerMinute();
+        
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({length: 10}, (_, i) => `-${9-i} min`),
+                datasets: [{
+                    label: 'Mensajes por minuto',
+                    data: chartData,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Cantidad de mensajes'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tiempo'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Actualizar la tabla de colas
+        function updateQueueTable() {
+            const queues = simulatedData.generateQueues();
+            const tbody = document.getElementById('queue-table');
+            tbody.innerHTML = '';
+            
+            if (queues.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center;">No hay colas activas en este momento</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            queues.forEach(queue => {
+                const messagesHtml = queue.messages.map(msg => 
+                    `<span class="message-text">${msg.text}</span>`
+                ).join('');
+                
+                const statusClass = queue.status === 'Esperando' ? 'waiting' : 'processed';
+                
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${queue.userId}</td>
+                        <td>${messagesHtml}</td>
+                        <td><span class="status-badge ${statusClass}">${queue.status}</span></td>
+                        <td>${formatDate(queue.timestamp)}</td>
+                    </tr>
+                `;
+            });
+            
+            // Actualizar la hora del último mensaje
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+        }
+        
+        // Simular actualización periódica de los datos
+        function simulateDataUpdate() {
+            // Actualizar datos del gráfico
+            chartData.shift();
+            chartData.push(Math.floor(Math.random() * 15) + 1);
+            chart.data.datasets[0].data = chartData;
+            chart.update();
+            
+            // Actualizar tabla de colas
+            updateQueueTable();
+        }
+        
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar datos iniciales
+            updateQueueTable();
+            
+            // Configurar botón de actualización
+            document.getElementById('refresh-btn').addEventListener('click', simulateDataUpdate);
+            
+            // Simular actualizaciones cada 10 segundos
+            setInterval(simulateDataUpdate, 10000);
+        });
+    </script>
+</body>
+</html> 
