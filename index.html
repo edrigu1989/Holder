@@ -21,6 +21,9 @@
             --border-color: #eee;
             --table-row-hover: rgba(0, 123, 255, 0.05);
             --table-row-even: rgba(0, 0, 0, 0.02);
+            --logo-primary: #007bff;
+            --logo-shadow: rgba(0, 123, 255, 0.7);
+            --splash-bg: #f4f4f4;
         }
 
         /* Variables para el tema oscuro */
@@ -37,6 +40,9 @@
             --border-color: #444;
             --table-row-hover: rgba(30, 144, 255, 0.15);
             --table-row-even: rgba(255, 255, 255, 0.05);
+            --logo-primary: #1e90ff;
+            --logo-shadow: rgba(30, 144, 255, 0.7);
+            --splash-bg: #1e1e1e;
         }
         
         * {
@@ -62,7 +68,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--bg-white);
+            background-color: var(--splash-bg);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -71,16 +77,74 @@
             transition: opacity 1.5s ease-in-out;
         }
         
-        .splash-logo {
+        /* Logo CSS personalizado */
+        .css-logo-container {
+            position: relative;
             width: 200px;
             height: 200px;
-            animation: fadeInOut 2.5s ease-in-out forwards;
+            animation: logoFadeInOut 3s ease-in-out forwards;
         }
-        
-        @keyframes fadeInOut {
+
+        .logo-circle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 10px solid var(--logo-primary);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--logo-shadow);
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        .logo-text {
+            position: absolute;
+            width: 100%;
+            bottom: 35px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--logo-primary);
+            text-align: center;
+            text-shadow: 0 0 10px var(--logo-shadow);
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        .logo-wave {
+            position: absolute;
+            top: 35%;
+            left: 20%;
+            width: 60%;
+            height: 30px;
+            stroke: var(--logo-primary);
+            stroke-width: 4px;
+            fill: none;
+            animation: wavePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes logoFadeInOut {
             0% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(1.1); }
+            30% { opacity: 1; transform: scale(1); }
+            80% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(1.2); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 10px var(--logo-shadow); }
+            50% { box-shadow: 0 0 25px var(--logo-shadow); }
+            100% { box-shadow: 0 0 10px var(--logo-shadow); }
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 5px var(--logo-shadow); }
+            50% { text-shadow: 0 0 15px var(--logo-shadow); }
+            100% { text-shadow: 0 0 5px var(--logo-shadow); }
+        }
+
+        @keyframes wavePulse {
+            0% { stroke-width: 3px; }
+            50% { stroke-width: 5px; }
+            100% { stroke-width: 3px; }
         }
         
         .container {
@@ -278,17 +342,28 @@
                 right: 10px;
             }
             
-            .splash-logo {
+            .css-logo-container {
                 width: 150px;
                 height: 150px;
+            }
+            
+            .logo-text {
+                font-size: 28px;
+                bottom: 30px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Pantalla de inicio con logo -->
+    <!-- Pantalla de inicio con logo CSS -->
     <div class="splash-screen" id="splash-screen">
-        <img src="./logo.svg" alt="M5V Logo" class="splash-logo">
+        <div class="css-logo-container">
+            <div class="logo-circle"></div>
+            <svg class="logo-wave" viewBox="0 0 100 40">
+                <path d="M0,20 Q12.5,0 25,20 Q37.5,40 50,20 Q62.5,0 75,20 Q87.5,40 100,20" />
+            </svg>
+            <div class="logo-text">M5V</div>
+        </div>
     </div>
 
     <div class="container">
@@ -342,13 +417,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             const splashScreen = document.getElementById('splash-screen');
             
-            // Ocultar el splash screen después de 3 segundos
+            // Ocultar el splash screen después de 3.5 segundos
             setTimeout(() => {
                 splashScreen.style.opacity = "0";
                 setTimeout(() => {
                     splashScreen.style.display = "none";
                 }, 1500);
-            }, 3000);
+            }, 3500);
         });
     
         // Configuración del selector de tema
