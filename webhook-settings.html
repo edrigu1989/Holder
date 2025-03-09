@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Webhook Configuration - M5V</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -21,6 +22,7 @@
             --border-color: #e0e0e0;
             --logo-primary: #1a73e8;
             --logo-shadow: rgba(26, 115, 232, 0.5);
+            --font-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
 
         /* Dark theme variables */
@@ -47,12 +49,14 @@
         }
         
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: var(--font-primary);
             background-color: var(--bg-light);
             color: var(--text-dark);
             line-height: 1.6;
             padding: 20px;
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .container {
@@ -236,28 +240,118 @@
         .webhook-config {
             flex: 1;
             min-width: 300px;
-            padding: 15px;
+            padding: 20px;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             background-color: var(--bg-light);
         }
 
         .webhook-config h4 {
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: var(--primary);
+            font-weight: 500;
         }
 
         .webhook-config p {
             margin-bottom: 15px;
-            font-size: 14px;
+            font-size: 15px;
+            line-height: 1.5;
         }
 
         .webhook-config pre {
             background-color: var(--bg-white);
-            padding: 10px;
+            padding: 12px;
             border-radius: 4px;
             overflow-x: auto;
-            font-size: 12px;
+            font-size: 13px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        .config-item {
+            margin-bottom: 20px;
+        }
+
+        .config-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 15px;
+        }
+
+        .input-with-copy {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .input-with-copy input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        small {
+            display: block;
+            margin-top: 6px;
+            color: var(--secondary);
+            font-size: 13px;
+        }
+
+        .setup-steps {
+            margin-top: 25px;
+            margin-bottom: 25px;
+            background-color: var(--bg-white);
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .setup-steps h3 {
+            margin-bottom: 12px;
+            color: var(--primary);
+            font-size: 16px;
+        }
+
+        .setup-steps ol {
+            padding-left: 20px;
+        }
+
+        .setup-steps li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .test-webhook {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0b5fca;
+        }
+
+        .status-indicator {
+            font-size: 14px;
+            margin-left: 10px;
         }
 
         footer {
@@ -435,6 +529,9 @@
             padding-bottom: 10px;
             border-bottom: 1px solid var(--border-color);
         }
+
+        /* Add Google Font link for Inter */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     </style>
 </head>
 <body>
