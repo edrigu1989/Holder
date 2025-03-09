@@ -1,5 +1,19 @@
 {
-  "name": "dashboard-simple",
+  "name": "chat-dashboard",
   "version": "1.0.0",
-  "private": true
+  "description": "Dashboard para mensajes con ManyChat y n8n",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 } 
