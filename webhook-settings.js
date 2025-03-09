@@ -324,4 +324,180 @@ function saveN8nWebhook() {
     
     // En una aplicación real, también enviarías esto a tu servidor:
     // saveConfigToServer('n8nWebhook', { url: webhookUrl });
-} 
+}
+
+// ManyChat API Integration Functions
+function saveManyChat() {
+    const apiKey = document.getElementById('manychat-api-key').value;
+    const pageId = document.getElementById('manychat-page-id').value;
+    
+    if (!apiKey) {
+        alert('Please enter your ManyChat API Key');
+        return;
+    }
+    
+    // Guardar en localStorage (en producción, considerar opciones más seguras)
+    localStorage.setItem('manychat_api_key', apiKey);
+    localStorage.setItem('manychat_page_id', pageId);
+    
+    showNotification('ManyChat API configuration saved successfully!');
+}
+
+function testManyChat() {
+    const apiKey = document.getElementById('manychat-api-key').value;
+    const statusElement = document.getElementById('manychat-api-status');
+    
+    if (!apiKey) {
+        statusElement.textContent = 'Please enter your ManyChat API Key';
+        statusElement.style.color = 'var(--danger)';
+        return;
+    }
+    
+    statusElement.textContent = 'Testing connection...';
+    statusElement.style.color = '';
+    
+    // Simulación de prueba de conexión a ManyChat API
+    // En una implementación real, aquí se haría una llamada a la API de ManyChat
+    setTimeout(() => {
+        statusElement.textContent = 'Connection successful!';
+        statusElement.style.color = 'var(--success)';
+    }, 1500);
+}
+
+function getSubscribers() {
+    const apiKey = document.getElementById('manychat-api-key').value;
+    const responseElement = document.getElementById('api-response');
+    
+    if (!apiKey) {
+        responseElement.textContent = 'Please enter your ManyChat API Key';
+        return;
+    }
+    
+    responseElement.textContent = 'Loading subscribers...';
+    
+    // Simulación de obtención de suscriptores
+    // En una implementación real, aquí se haría una llamada a la API de ManyChat
+    setTimeout(() => {
+        const mockResponse = {
+            success: true,
+            data: {
+                subscribers: [
+                    { id: '123456789', name: 'John Doe', status: 'active' },
+                    { id: '987654321', name: 'Jane Smith', status: 'active' },
+                    { id: '456789123', name: 'Robert Johnson', status: 'inactive' }
+                ],
+                total: 3
+            }
+        };
+        
+        responseElement.textContent = JSON.stringify(mockResponse, null, 2);
+    }, 1500);
+}
+
+function getTags() {
+    const apiKey = document.getElementById('manychat-api-key').value;
+    const responseElement = document.getElementById('api-response');
+    
+    if (!apiKey) {
+        responseElement.textContent = 'Please enter your ManyChat API Key';
+        return;
+    }
+    
+    responseElement.textContent = 'Loading tags...';
+    
+    // Simulación de obtención de etiquetas
+    // En una implementación real, aquí se haría una llamada a la API de ManyChat
+    setTimeout(() => {
+        const mockResponse = {
+            success: true,
+            data: {
+                tags: [
+                    { id: '1', name: 'Customer', count: 120 },
+                    { id: '2', name: 'Lead', count: 45 },
+                    { id: '3', name: 'VIP', count: 12 }
+                ],
+                total: 3
+            }
+        };
+        
+        responseElement.textContent = JSON.stringify(mockResponse, null, 2);
+    }, 1500);
+}
+
+function getFlows() {
+    const apiKey = document.getElementById('manychat-api-key').value;
+    const responseElement = document.getElementById('api-response');
+    
+    if (!apiKey) {
+        responseElement.textContent = 'Please enter your ManyChat API Key';
+        return;
+    }
+    
+    responseElement.textContent = 'Loading flows...';
+    
+    // Simulación de obtención de flujos
+    // En una implementación real, aquí se haría una llamada a la API de ManyChat
+    setTimeout(() => {
+        const mockResponse = {
+            success: true,
+            data: {
+                flows: [
+                    { id: '101', name: 'Welcome Flow', status: 'active' },
+                    { id: '102', name: 'Lead Nurturing', status: 'active' },
+                    { id: '103', name: 'Abandoned Cart', status: 'paused' }
+                ],
+                total: 3
+            }
+        };
+        
+        responseElement.textContent = JSON.stringify(mockResponse, null, 2);
+    }, 1500);
+}
+
+// Cargar valores guardados de ManyChat API
+function loadManyChatAPISettings() {
+    const savedApiKey = localStorage.getItem('manychat_api_key');
+    const savedPageId = localStorage.getItem('manychat_page_id');
+    
+    if (savedApiKey) {
+        document.getElementById('manychat-api-key').value = savedApiKey;
+    }
+    
+    if (savedPageId) {
+        document.getElementById('manychat-page-id').value = savedPageId;
+    }
+}
+
+// Añadir event listeners para los botones de ManyChat API
+document.addEventListener('DOMContentLoaded', function() {
+    // Cargar configuración guardada
+    loadManyChatAPISettings();
+    
+    // Botón para guardar configuración de ManyChat API
+    const saveManyChatAPIBtn = document.getElementById('save-manychat-api');
+    if (saveManyChatAPIBtn) {
+        saveManyChatAPIBtn.addEventListener('click', saveManyChat);
+    }
+    
+    // Botón para probar conexión con ManyChat API
+    const testManyChatAPIBtn = document.getElementById('test-manychat-api');
+    if (testManyChatAPIBtn) {
+        testManyChatAPIBtn.addEventListener('click', testManyChat);
+    }
+    
+    // Botones para acciones de API
+    const getSubscribersBtn = document.getElementById('get-subscribers');
+    if (getSubscribersBtn) {
+        getSubscribersBtn.addEventListener('click', getSubscribers);
+    }
+    
+    const getTagsBtn = document.getElementById('get-tags');
+    if (getTagsBtn) {
+        getTagsBtn.addEventListener('click', getTags);
+    }
+    
+    const getFlowsBtn = document.getElementById('get-flows');
+    if (getFlowsBtn) {
+        getFlowsBtn.addEventListener('click', getFlows);
+    }
+}); 

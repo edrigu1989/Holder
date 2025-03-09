@@ -717,6 +717,218 @@
             </div>
         </div>
         
+        <!-- Nueva sección para ManyChat API Integration -->
+        <div class="card">
+            <h2>ManyChat API Integration</h2>
+            <p>Connect directly to ManyChat API to send messages and manage subscribers.</p>
+            
+            <div class="webhook-config">
+                <div class="config-item">
+                    <label>ManyChat API Key:</label>
+                    <div class="input-with-copy">
+                        <input type="password" id="manychat-api-key" placeholder="Enter your ManyChat API Key">
+                        <button class="toggle-password" onclick="togglePasswordVisibility('manychat-api-key')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small>Get this from your ManyChat dashboard under Settings > API.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>Page ID:</label>
+                    <div class="input-with-copy">
+                        <input type="text" id="manychat-page-id" placeholder="Enter your Facebook Page ID">
+                    </div>
+                    <small>Your Facebook Page ID associated with ManyChat.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>API Actions:</label>
+                    <div class="api-actions">
+                        <button class="btn secondary" id="get-subscribers">Get Subscribers</button>
+                        <button class="btn secondary" id="get-tags">Get Tags</button>
+                        <button class="btn secondary" id="get-flows">Get Flows</button>
+                    </div>
+                    <small>Test API functionality by retrieving data from ManyChat.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>API Response:</label>
+                    <div class="json-structure">
+                        <pre id="api-response" style="min-height: 150px;">// API response will appear here</pre>
+                    </div>
+                </div>
+                
+                <div class="config-item">
+                    <label>Example API Usage:</label>
+                    <div class="json-structure">
+                        <h4>Send Message to Subscriber:</h4>
+                        <pre id="send-message-example">{
+  "subscriber_id": "subscriber_id_here",
+  "data": {
+    "messages": [
+      {
+        "type": "text",
+        "text": "Hello from your application!"
+      }
+    ]
+  }
+}</pre>
+                        <button class="copy-btn" data-target="send-message-example"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="json-structure">
+                        <h4>Add Tag to Subscriber:</h4>
+                        <pre id="add-tag-example">{
+  "subscriber_id": "subscriber_id_here",
+  "tag_name": "your_tag_name"
+}</pre>
+                        <button class="copy-btn" data-target="add-tag-example"><i class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+                
+                <div class="setup-steps">
+                    <h3>Integration Steps:</h3>
+                    <ol>
+                        <li>Go to your ManyChat dashboard</li>
+                        <li>Navigate to Settings > API</li>
+                        <li>Generate a new API Key</li>
+                        <li>Copy and paste the API Key above</li>
+                        <li>Save your settings</li>
+                        <li>Use the API to send messages, manage subscribers, and more</li>
+                    </ol>
+                </div>
+                
+                <div class="test-webhook">
+                    <button class="btn success" id="save-manychat-api">Save API Configuration</button>
+                    <button class="btn" id="test-manychat-api">Test API Connection</button>
+                    <span class="status-indicator" id="manychat-api-status"></span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Nueva sección para ManyChat JSON App -->
+        <div class="card">
+            <h2>ManyChat JSON App Example</h2>
+            <p>Use this JSON structure to create a custom app in ManyChat that integrates with our system.</p>
+            
+            <div class="webhook-config">
+                <div class="config-item">
+                    <label>ManyChat JSON App Structure:</label>
+                    <div class="json-structure">
+                        <pre id="manychat-json-app">{
+  "name": "M5V Integration",
+  "type": "webhook",
+  "request": {
+    "url": "{{Your Webhook URL}}",
+    "method": "POST",
+    "headers": [
+      {
+        "name": "Content-Type",
+        "value": "application/json"
+      },
+      {
+        "name": "Authorization",
+        "value": "{{Your Auth Token}}"
+      }
+    ],
+    "body": {
+      "user": {
+        "id": "{{user_id}}",
+        "name": "{{first_name}} {{last_name}}",
+        "phone": "{{phone}}",
+        "email": "{{email}}"
+      },
+      "message": {
+        "text": "{{last_input_text}}",
+        "timestamp": "{{current_date}}"
+      },
+      "metadata": {
+        "platform": "facebook",
+        "source": "messenger",
+        "flow_id": "{{flow_id}}",
+        "page_id": "{{page_id}}"
+      },
+      "custom_fields": {
+        "weight": "{{custom_field.weight}}",
+        "height": "{{custom_field.height}}",
+        "preferences": "{{custom_field.preferences}}"
+      }
+    }
+  },
+  "response": {
+    "success_path": "$.success",
+    "data_path": "$.data",
+    "error_path": "$.error"
+  }
+}</pre>
+                        <button class="copy-btn" data-target="manychat-json-app"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <small>Copy this JSON structure and use it in ManyChat to create a custom app that integrates with our system. Replace {{Your Webhook URL}} and {{Your Auth Token}} with your actual values.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>Pokémon Integration Example:</label>
+                    <div class="json-structure">
+                        <pre id="pokemon-json-app">{
+  "sources": [
+    {
+      "name": "pokemon_list",
+      "type": "enum:rpc",
+      "request": {
+        "url": "https://pokeapi.co/api/v2/pokemon/",
+        "method": "GET",
+        "headers": [
+          {
+            "Content-Type": "application/json"
+          }
+        ]
+      },
+      "mapping": [
+        {
+          "type": "select",
+          "path": "$.results",
+          "key": "$.name",
+          "value": "$.url"
+        }
+      ],
+      "payload": null
+    }
+  ],
+  "fields": [
+    {
+      "name": "weight",
+      "path": "$.weight",
+      "type": "number",
+      "title": "Pokémon weight"
+    }
+  ],
+  "payload": null,
+  "description": "quiz game with random questions"
+}</pre>
+                        <button class="copy-btn" data-target="pokemon-json-app"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <small>This example shows how to integrate with the Pokémon API to fetch a list of Pokémon and their details. You can use this as a template for your own custom integrations.</small>
+                </div>
+                
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>This JSON structure is compatible with ManyChat's custom app feature. You can customize the fields and structure based on your specific needs. The example includes user data, message content, and metadata that will be sent to your webhook.</p>
+                </div>
+                
+                <div class="setup-steps">
+                    <h3>How to Use This JSON in ManyChat:</h3>
+                    <ol>
+                        <li>Go to your ManyChat dashboard</li>
+                        <li>Navigate to Settings > Custom App</li>
+                        <li>Create a new app</li>
+                        <li>Paste this JSON structure</li>
+                        <li>Replace the placeholders with your actual values</li>
+                        <li>Save and activate your app</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
         <div class="card">
             <h2>n8n Integration</h2>
             <p>Configure n8n to process your webhook data.</p>
