@@ -16,7 +16,21 @@ const supabase = createClient(
 // Servir archivos estáticos
 app.use(express.static('.'));
 
-// Recibir mensajes del webhook
+// Middleware para verificar API Key
+const verifyApiKey = (req, res, next) => {
+  const apiKey = req.header('X-API-Key');
+  
+  // En producción, verificaríamos la API Key contra la base de datos
+  const validApiKey = process.env.API_KEY || 'xxxx-xxxx-xxxx-xxxx';
+  
+  if (apiKey !== validApiKey) {
+    return res.status(401).json({ error: 'API Key inválida' });
+  }
+  
+  next();
+};
+
+// Recibir mensajes generales (webhook original)
 app.post('/webhook', async (req, res) => {
   try {
     const { recordid, message } = req.body;
@@ -34,8 +48,182 @@ app.post('/webhook', async (req, res) => {
   }
 });
 
+// Webhook específico para ManyChat
+app.post('/webhook/manychat/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    // En producción, verificaríamos el token contra la base de datos
+    const validToken = process.env.MANYCHAT_TOKEN || 'abc123def456';
+    
+    if (token !== validToken) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+    
+    const { recordid, message, name, metadata } = req.body;
+    
+    if (!recordid || !message) {
+      return res.status(400).json({ error: 'Faltan campos requeridos (recordid, message)' });
+    }
+    
+    // Guardar mensaje en la base de datos
+    await supabase.from('messages').insert([{
+      recordid,
+      message,
+      sender_name: name || 'Usuario',
+      metadata: metadata || {},
+      processed: false,
+      timestamp: new Date().toISOString(),
+      source: 'manychat',
+      sender: 'user'
+    }]);
+    
+    // Responder con éxito
+    res.status(200).json({
+      success: true,
+      message: 'Mensaje recibido correctamente',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Error en webhook de ManyChat:', error);
+    res.status(500).json({ 
+      error: 'Error interno del servidor',
+      message: error.message
+    });
+  }
+});
+
+// Webhook específico para n8n
+app.post('/webhook/n8n/:token', async (req, res) => {
+  try {
+    const { token } = req.params;
+    
+    // En producción, verificaríamos el token contra la base de datos
+    const validToken = process.env.N8N_TOKEN || 'xyz789abc012';
+    
+    if (token !== validToken) {
+      return res.status(401).json({ error: 'Token inválido' });
+    }
+    
+    const data = req.body;
+    
+    // Procesar la solicitud de n8n según tus necesidades
+    console.log('Datos recibidos de n8n:', data);
+    
+    // Si n8n está enviando una respuesta para un mensaje anterior
+    if (data.recordid && data.response) {
+      await supabase.from('messages').insert([{
+        recordid: data.recordid,
+        message: data.response,
+        processed: true,
+        timestamp: new Date().toISOString(),
+        source: 'n8n',
+        sender: 'system'
+      }]);
+      
+      // También podríamos actualizar los mensajes originales como procesados
+      if (data.messageIds && Array.isArray(data.messageIds)) {
+        await supabase
+          .from('messages')
+          .update({ processed: true })
+          .in('id', data.messageIds);
+      }
+    }
+    
+    // Responder a n8n
+    res.status(200).json({
+      success: true,
+      message: 'Procesado correctamente por M5V',
+      timestamp: new Date().toISOString()
+    });
+    
+  } catch (error) {
+    console.error('Error en webhook de n8n:', error);
+    res.status(500).json({ 
+      error: 'Error interno del servidor',
+      message: error.message
+    });
+  }
+});
+
+// API para obtener configuración de webhooks (requiere autenticación)
+app.get('/api/webhook-config', verifyApiKey, async (req, res) => {
+  try {
+    // En producción, esto vendría de la base de datos
+    const config = {
+      manychat: {
+        token: process.env.MANYCHAT_TOKEN || 'abc123def456',
+        url: `${req.protocol}://${req.hostname}/webhook/manychat/${process.env.MANYCHAT_TOKEN || 'abc123def456'}`
+      },
+      n8n: {
+        token: process.env.N8N_TOKEN || 'xyz789abc012',
+        url: `${req.protocol}://${req.hostname}/webhook/n8n/${process.env.N8N_TOKEN || 'xyz789abc012'}`
+      }
+    };
+    
+    res.json(config);
+  } catch (error) {
+    console.error('Error al obtener configuración:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// API para actualizar tokens de webhook (requiere autenticación)
+app.post('/api/update-webhook-token', verifyApiKey, async (req, res) => {
+  try {
+    const { type, token } = req.body;
+    
+    if (!type || !token) {
+      return res.status(400).json({ error: 'Faltan campos requeridos (type, token)' });
+    }
+    
+    if (type !== 'manychat' && type !== 'n8n') {
+      return res.status(400).json({ error: 'Tipo de webhook inválido' });
+    }
+    
+    // En producción, actualizaríamos el token en la base de datos
+    if (type === 'manychat') {
+      process.env.MANYCHAT_TOKEN = token;
+    } else {
+      process.env.N8N_TOKEN = token;
+    }
+    
+    res.json({ 
+      success: true, 
+      message: `Token de ${type} actualizado correctamente`,
+      url: `${req.protocol}://${req.hostname}/webhook/${type}/${token}`
+    });
+  } catch (error) {
+    console.error('Error al actualizar token:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// API para actualizar API Key (requiere autenticación con la API Key anterior)
+app.post('/api/update-api-key', verifyApiKey, async (req, res) => {
+  try {
+    const { newApiKey } = req.body;
+    
+    if (!newApiKey) {
+      return res.status(400).json({ error: 'Falta el campo newApiKey' });
+    }
+    
+    // En producción, actualizaríamos la API Key en la base de datos
+    process.env.API_KEY = newApiKey;
+    
+    res.json({ 
+      success: true, 
+      message: 'API Key actualizada correctamente'
+    });
+  } catch (error) {
+    console.error('Error al actualizar API Key:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 // API para obtener conversaciones
-app.get('/api/conversations', async (req, res) => {
+app.get('/api/conversations', verifyApiKey, async (req, res) => {
   try {
     const { data, error } = await supabase
       .from('messages')
@@ -50,7 +238,7 @@ app.get('/api/conversations', async (req, res) => {
 });
 
 // API para obtener mensajes de una conversación
-app.get('/api/messages/:recordid', async (req, res) => {
+app.get('/api/messages/:recordid', verifyApiKey, async (req, res) => {
   try {
     const { recordid } = req.params;
     const { data, error } = await supabase
@@ -67,7 +255,7 @@ app.get('/api/messages/:recordid', async (req, res) => {
 });
 
 // API para enviar respuesta
-app.post('/api/respond', async (req, res) => {
+app.post('/api/respond', verifyApiKey, async (req, res) => {
   try {
     const { recordid, message } = req.body;
     
@@ -131,18 +319,40 @@ setInterval(async () => {
 }, 5000);
 
 async function processMessages(messages) {
-  // Aquí procesas los mensajes (ej. con una IA)
-  // Por ahora retornamos una respuesta simple
+  // En una implementación real, aquí procesarías los mensajes con una IA o reglas
+  console.log(`Procesando ${messages.length} mensajes para ${messages[0].recordid}`);
+  
+  // Se podría enviar a una API externa o procesar con reglas del negocio
+  // Por ahora retornamos una respuesta genérica
   return "Gracias por tu mensaje. Un agente te responderá pronto.";
 }
 
 async function sendResponse(recordid, response) {
   // Aquí envías la respuesta al sistema original (ej. ManyChat)
   try {
-    // Implementar la lógica para enviar a ManyChat o n8n
     console.log(`Respuesta a ${recordid}: ${response}`);
     
-    // Guardar respuesta en Supabase
+    // En una implementación real, aquí realizaríamos una petición HTTP a ManyChat o n8n
+    // Ejemplo:
+    /*
+    await axios.post('https://api.manychat.com/fb/sending/sendContent', {
+      subscriber_id: recordid,
+      content: {
+        messages: [
+          {
+            type: 'text',
+            text: response
+          }
+        ]
+      }
+    }, {
+      headers: {
+        'Authorization': 'Bearer YOUR_MANYCHAT_API_KEY'
+      }
+    });
+    */
+    
+    // Guardar respuesta en Supabase para el registro
     await supabase.from('messages').insert([{ 
       recordid, 
       message: response, 

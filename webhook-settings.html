@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración de Webhooks - M5V</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Variables para el tema claro */
+            --primary: #007bff;
+            --secondary: #6c757d;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --bg-light: #f4f4f4;
+            --bg-white: #fff;
+            --text-dark: #333;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --border-color: #eee;
+            --logo-primary: #007bff;
+            --logo-shadow: rgba(0, 123, 255, 0.7);
+        }
+
+        /* Variables para el tema oscuro */
+        html[data-theme='dark'] {
+            --primary: #1e90ff;
+            --secondary: #8c8c8c;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --warning: #d4a017;
+            --bg-light: #1e1e1e;
+            --bg-white: #2d2d2d;
+            --text-dark: #e0e0e0;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --border-color: #444;
+            --logo-primary: #1e90ff;
+            --logo-shadow: rgba(30, 144, 255, 0.7);
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Selector de tema */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .card {
+            background-color: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .webhook-section {
+            margin-bottom: 30px;
+        }
+
+        .webhook-url {
+            background-color: var(--bg-light);
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 15px 0;
+            position: relative;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .copy-btn:hover {
+            opacity: 0.9;
+        }
+
+        .step {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .step h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .step p {
+            margin-bottom: 10px;
+        }
+
+        .step img {
+            max-width: 100%;
+            margin: 10px 0;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+        }
+
+        .regenerate-btn {
+            background-color: var(--warning);
+            color: var(--text-dark);
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .regenerate-btn:hover {
+            opacity: 0.9;
+        }
+
+        .token-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .token-container input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: monospace;
+        }
+
+        .generate-token-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .webhook-config-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .webhook-config {
+            flex: 1;
+            min-width: 300px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: var(--bg-light);
+        }
+
+        .webhook-config h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .webhook-config p {
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .webhook-config pre {
+            background-color: var(--bg-white);
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: var(--success);
+            color: white;
+            border-radius: 4px;
+            box-shadow: var(--card-shadow);
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            header h1 {
+                font-size: 1.5rem;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+            }
+
+            .back-link {
+                top: 10px;
+                left: 10px;
+            }
+
+            .webhook-config {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <a href="index.html" class="back-link">← Volver al Dashboard</a>
+            <h1>Configuración de Webhooks</h1>
+            <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">☀️</button>
+        </header>
+
+        <div class="card">
+            <h2>Configuración de Webhook para ManyChat</h2>
+            <div class="webhook-section">
+                <p>Este es el URL del webhook que debes configurar en ManyChat para recibir mensajes:</p>
+                <div class="webhook-url" id="manychat-webhook-url">
+                    https://<span id="server-hostname">tu-dominio.com</span>/webhook/manychat/<span id="manychat-token">abc123def456</span>
+                    <button class="copy-btn" onclick="copyToClipboard('manychat-webhook-url')">Copiar</button>
+                </div>
+                <div class="token-container">
+                    <input type="text" id="manychat-token-input" value="abc123def456" readonly>
+                    <button class="generate-token-btn" onclick="generateToken('manychat')">Generar Nuevo Token</button>
+                </div>
+                <button class="regenerate-btn" onclick="confirmRegenerate('manychat')">Regenerar URL Completo</button>
+            </div>
+
+            <div class="step">
+                <h3>Paso 1: Accede a ManyChat</h3>
+                <p>Inicia sesión en tu cuenta de ManyChat y navega a la sección de "Settings" (Configuración).</p>
+            </div>
+
+            <div class="step">
+                <h3>Paso 2: Configura el Webhook</h3>
+                <p>En ManyChat, ve a "Settings" > "API & Webhooks" > "External Requests" y haz clic en "Add New Request".</p>
+                <p>Configura los siguientes valores:</p>
+                <ul>
+                    <li><strong>Name:</strong> M5V Webhook (o cualquier nombre descriptivo)</li>
+                    <li><strong>URL:</strong> Copia el URL de arriba</li>
+                    <li><strong>Method:</strong> POST</li>
+                    <li><strong>Content Type:</strong> application/json</li>
+                </ul>
+            </div>
+
+            <div class="step">
+                <h3>Paso 3: Define la Estructura de Datos</h3>
+                <p>Configura el cuerpo del webhook con la siguiente estructura JSON:</p>
+                <div class="webhook-url">
+<pre>{
+  "recordid": "{{subscriber.id}}",
+  "message": "{{last.user.message}}",
+  "name": "{{subscriber.name}}",
+  "metadata": {
+    "flow": "{{flow.name}}",
+    "platform": "manychat"
+  }
+}</pre>
+                    <button class="copy-btn" onclick="copyToClipboard('webhookBody')">Copiar</button>
+                </div>
+            </div>
+
+            <div class="step">
+                <h3>Paso 4: Activa el Webhook</h3>
+                <p>Conecta este webhook a los eventos deseados (nuevos mensajes, inicios de conversación, etc.) y guarda la configuración.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Configuración de Webhook para n8n</h2>
+            <div class="webhook-section">
+                <p>Este es el URL del webhook que debes configurar en n8n para procesar mensajes:</p>
+                <div class="webhook-url" id="n8n-webhook-url">
+                    https://<span id="server-hostname-n8n">tu-dominio.com</span>/webhook/n8n/<span id="n8n-token">xyz789abc012</span>
+                    <button class="copy-btn" onclick="copyToClipboard('n8n-webhook-url')">Copiar</button>
+                </div>
+                <div class="token-container">
+                    <input type="text" id="n8n-token-input" value="xyz789abc012" readonly>
+                    <button class="generate-token-btn" onclick="generateToken('n8n')">Generar Nuevo Token</button>
+                </div>
+                <button class="regenerate-btn" onclick="confirmRegenerate('n8n')">Regenerar URL Completo</button>
+            </div>
+
+            <div class="webhook-config-container">
+                <div class="webhook-config">
+                    <h4>Configuración en n8n</h4>
+                    <p>Añade un nodo "Webhook" y configúralo así:</p>
+                    <ul>
+                        <li><strong>Authentication:</strong> None o Header (recomendado)</li>
+                        <li><strong>HTTP Method:</strong> POST</li>
+                        <li><strong>Path:</strong> /</li>
+                        <li><strong>Response Mode:</strong> Last Node</li>
+                    </ul>
+                </div>
+
+                <div class="webhook-config">
+                    <h4>Ejemplo de Flujo en n8n</h4>
+                    <p>Flujo básico para procesar mensajes:</p>
+                    <pre>Webhook → Function (procesar) → HTTP Request (enviar respuesta a M5V)</pre>
+                    <p>En el nodo "Function", puedes acceder al mensaje con:</p>
+                    <pre>const data = $input.item.json;
+const recordid = data.recordid;
+const message = data.message;</pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Configuración Avanzada</h2>
+            <p>Para configurar opciones avanzadas como encriptación, cabeceras de autenticación, o métodos de respuesta personalizados, contacta al administrador del sistema.</p>
+            
+            <div class="webhook-section">
+                <h3>Cabeceras de Autenticación</h3>
+                <p>Cuando envíes peticiones a nuestro API, incluye la siguiente cabecera:</p>
+                <div class="webhook-url">
+                    X-API-Key: <span id="api-key">xxxx-xxxx-xxxx-xxxx</span>
+                    <button class="copy-btn" onclick="copyToClipboard('api-key')">Copiar</button>
+                </div>
+                <div class="token-container">
+                    <input type="text" id="api-key-input" value="xxxx-xxxx-xxxx-xxxx" readonly>
+                    <button class="generate-token-btn" onclick="generateApiKey()">Generar Nueva API Key</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>M5V Developments &copy; 2023 - Plataforma de Agrupación de Mensajes</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">¡Copiado al portapapeles!</div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar información del servidor
+            updateServerInfo();
+            
+            // Configuración del selector de tema
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            // Cargar tema guardado
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon(savedTheme);
+            
+            // Función para alternar el tema
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                updateThemeToggleIcon(newTheme);
+            });
+        });
+        
+        function updateThemeToggleIcon(theme) {
+            const themeToggle = document.getElementById('theme-toggle');
+            themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
+        }
+        
+        // Actualizar la información del servidor
+        async function updateServerInfo() {
+            try {
+                // En una implementación real, esto haría una petición para obtener la configuración
+                // Aquí, como es una demo, usamos datos estáticos
+                const hostname = window.location.hostname || 'tu-dominio.com';
+                
+                document.getElementById('server-hostname').textContent = hostname;
+                document.getElementById('server-hostname-n8n').textContent = hostname;
+                
+                // Comprobar si hay tokens guardados en localStorage
+                const manychatToken = localStorage.getItem('manychat-token') || 'abc123def456';
+                const n8nToken = localStorage.getItem('n8n-token') || 'xyz789abc012';
+                const apiKey = localStorage.getItem('api-key') || 'xxxx-xxxx-xxxx-xxxx';
+                
+                document.getElementById('manychat-token').textContent = manychatToken;
+                document.getElementById('manychat-token-input').value = manychatToken;
+                document.getElementById('n8n-token').textContent = n8nToken;
+                document.getElementById('n8n-token-input').value = n8nToken;
+                document.getElementById('api-key').textContent = apiKey;
+                document.getElementById('api-key-input').value = apiKey;
+                
+            } catch (error) {
+                console.error('Error al cargar la información del servidor:', error);
+            }
+        }
+        
+        // Copiar al portapapeles
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            let text = '';
+            
+            if (elementId === 'manychat-webhook-url' || elementId === 'n8n-webhook-url') {
+                text = element.innerText.replace('Copiar', '').trim();
+            } else if (elementId === 'api-key') {
+                text = element.innerText.trim();
+            } else {
+                // Si es un elemento pre o tiene contenido HTML complejo
+                text = element.innerText.trim();
+            }
+            
+            // Crear un elemento temporal para copiar
+            const tempInput = document.createElement('textarea');
+            tempInput.value = text;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            
+            // Mostrar notificación
+            showNotification('¡Copiado al portapapeles!');
+        }
+        
+        // Generar un nuevo token
+        function generateToken(type) {
+            const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let token = '';
+            for (let i = 0; i < 12; i++) {
+                token += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            
+            const tokenElement = document.getElementById(`${type}-token`);
+            const tokenInput = document.getElementById(`${type}-token-input`);
+            
+            tokenElement.textContent = token;
+            tokenInput.value = token;
+            
+            // Guardar en localStorage
+            localStorage.setItem(`${type}-token`, token);
+            
+            // Mostrar notificación
+            showNotification('¡Nuevo token generado!');
+            
+            // En una implementación real, esto haría una petición al servidor para actualizar el token
+        }
+        
+        // Generar una nueva API Key
+        function generateApiKey() {
+            const apiKey = 'xxxx-xxxx-xxxx-'.replace(/x/g, () => {
+                return Math.floor(Math.random() * 16).toString(16);
+            }) + Array(4).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
+            
+            document.getElementById('api-key').textContent = apiKey;
+            document.getElementById('api-key-input').value = apiKey;
+            
+            // Guardar en localStorage
+            localStorage.setItem('api-key', apiKey);
+            
+            // Mostrar notificación
+            showNotification('¡Nueva API Key generada!');
+            
+            // En una implementación real, esto haría una petición al servidor para actualizar la API Key
+        }
+        
+        // Confirmar regeneración
+        function confirmRegenerate(type) {
+            if (confirm(`¿Estás seguro de que quieres regenerar el URL completo para ${type}? Esto podría romper las integraciones existentes.`)) {
+                generateToken(type);
+                
+                // Simular un cambio de URL (en producción, esto sería una petición al servidor)
+                const hostname = window.location.hostname || 'tu-dominio.com';
+                document.getElementById(`server-hostname${type === 'n8n' ? '-n8n' : ''}`).textContent = hostname;
+                
+                showNotification('¡URL regenerado correctamente!');
+            }
+        }
+        
+        // Mostrar notificación
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html> 
