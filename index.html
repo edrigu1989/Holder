@@ -682,71 +682,59 @@
             </button>
         </header>
         
-        <div class="parallax-container" id="system-status-card">
-            <div class="parallax-bg"></div>
-            <div class="parallax-content">
-                <h2>System Status</h2>
-                <div>
-                    <span class="status-indicator online">Service Active</span>
-                    <p>Last message received: <strong id="last-update">12:30:45 PM</strong></p>
-                    <a href="webhook-settings.html" class="btn" style="background-color: var(--secondary);">Configure Webhooks</a>
-                </div>
+        <div class="card">
+            <h2>System Status</h2>
+            <div>
+                <span class="status-indicator online">Service Active</span>
+                <p>Last message received: <strong id="last-update">12:30:45 PM</strong></p>
+                <a href="webhook-settings.html" class="btn" style="background-color: var(--secondary);">Configure Webhooks</a>
             </div>
         </div>
         
-        <div class="parallax-container" id="messages-chart-card">
-            <div class="parallax-bg"></div>
-            <div class="parallax-content">
-                <h2>Messages per Minute</h2>
-                <div class="chart-container">
-                    <canvas id="messageChart"></canvas>
-                </div>
+        <div class="card">
+            <h2>Messages per Minute</h2>
+            <div class="chart-container">
+                <canvas id="messageChart"></canvas>
             </div>
         </div>
         
-        <div class="parallax-container" id="queues-card">
-            <div class="parallax-bg"></div>
-            <div class="parallax-content">
-                <h2>Active Queues</h2>
-                <button class="btn" id="refresh-btn">Refresh Data</button>
-                <div id="queues-container">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>User</th>
-                                <th>Messages</th>
-                                <th>Status</th>
-                                <th>Updated</th>
-                            </tr>
-                        </thead>
-                        <tbody id="queue-table">
-                            <!-- Data will be loaded dynamically -->
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <h2>Active Queues</h2>
+            <button class="btn" id="refresh-btn">Refresh Data</button>
+            <div id="queues-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Messages</th>
+                            <th>Status</th>
+                            <th>Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queue-table">
+                        <!-- Data will be loaded dynamically -->
+                    </tbody>
+                </table>
             </div>
         </div>
         
         <!-- Chat Interface -->
-        <div class="parallax-container" id="chat-card">
-            <div class="parallax-bg"></div>
-            <div class="parallax-content">
-                <h2>Message Center</h2>
-                <div class="chat-container">
-                    <div class="conversation-list" id="conversation-list">
-                        <!-- Conversations will be loaded here -->
+        <div class="card">
+            <h2>Message Center</h2>
+            <div class="chat-container">
+                <div class="conversation-list" id="conversation-list">
+                    <!-- Conversations will be loaded here -->
+                </div>
+                <div class="chat-main">
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be loaded here -->
+                        <div class="message system">
+                            Select a conversation to start
+                        </div>
                     </div>
-                    <div class="chat-main">
-                        <div class="chat-messages" id="chat-messages">
-                            <!-- Messages will be loaded here -->
-                            <div class="message system">
-                                Select a conversation to start
-                            </div>
-                        </div>
-                        <div class="chat-input">
-                            <input type="text" id="message-input" placeholder="Type your response..." disabled>
-                            <button class="btn" id="send-btn" disabled>Send</button>
-                        </div>
+                    <div class="chat-input">
+                        <input type="text" id="message-input" placeholder="Type your response..." disabled>
+                        <button class="btn" id="send-btn" disabled>Send</button>
                     </div>
                 </div>
             </div>
@@ -1343,34 +1331,6 @@
                     window.location.href = 'login.html';
                 });
             }
-
-            // Parallax effect
-            const parallaxContainers = document.querySelectorAll('.parallax-container');
-            
-            parallaxContainers.forEach(container => {
-                container.addEventListener('mousemove', function(e) {
-                    const rect = container.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    
-                    const moveX = (x - centerX) / 20;
-                    const moveY = (y - centerY) / 20;
-                    
-                    container.style.transform = `perspective(1000px) rotateY(${moveX}deg) rotateX(${-moveY}deg)`;
-                    
-                    const bg = container.querySelector('.parallax-bg');
-                    bg.style.transform = `translateZ(-10px) translateX(${-moveX * 2}px) translateY(${-moveY * 2}px)`;
-                });
-                
-                container.addEventListener('mouseleave', function() {
-                    container.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
-                    const bg = container.querySelector('.parallax-bg');
-                    bg.style.transform = 'translateZ(-10px) translateX(0) translateY(0)';
-                });
-            });
         });
     </script>
 </body>
