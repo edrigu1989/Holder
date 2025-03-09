@@ -396,200 +396,192 @@
         .connection-error {
             color: var(--danger);
         }
+
+        /* Parallax effect styles */
+        .parallax-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: -20px;
+            left: -20px;
+            right: -20px;
+            bottom: -20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            opacity: 0.05;
+            z-index: -1;
+            transform: translateZ(-10px);
+        }
+
+        .parallax-content {
+            position: relative;
+            z-index: 1;
+            transform: translateZ(0);
+            background-color: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .parallax-content h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <a href="index.html" class="back-link">← Back to Dashboard</a>
             <h1>Webhook Configuration</h1>
+            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
             <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
                 <i class="fas fa-sun"></i>
             </button>
         </header>
 
-        <div class="card">
-            <h2>ManyChat Webhook Configuration</h2>
-            <div class="webhook-section">
-                <p>This is the webhook URL you need to configure in ManyChat to receive messages:</p>
-                <div class="webhook-url" id="manychat-webhook-url">
-                    https://<span id="server-hostname">your-domain.com</span>/webhook/manychat/<span id="manychat-token">abc123def456</span>
-                    <button class="copy-btn" onclick="copyToClipboard('manychat-webhook-url')">Copy</button>
-                </div>
-                <div class="token-container">
-                    <input type="text" id="manychat-token-input" value="abc123def456" readonly>
-                    <button class="generate-token-btn" onclick="generateToken('manychat')">Generate New Token</button>
-                </div>
-                <button class="regenerate-btn" onclick="confirmRegenerate('manychat')">Regenerate Complete URL</button>
-            </div>
-
-            <div class="step">
-                <h3>Step 1: Access ManyChat</h3>
-                <p>Log in to your ManyChat account and navigate to the "Settings" section.</p>
-            </div>
-
-            <div class="step">
-                <h3>Step 2: Configure the Webhook</h3>
-                <p>In ManyChat, go to "Settings" > "API & Webhooks" > "External Requests" and click on "Add New Request".</p>
-                <p>Configure the following values:</p>
-                <ul>
-                    <li><strong>Name:</strong> M5V Webhook (or any descriptive name)</li>
-                    <li><strong>URL:</strong> Copy the URL above</li>
-                    <li><strong>Method:</strong> POST</li>
-                    <li><strong>Content Type:</strong> application/json</li>
-                </ul>
-            </div>
-
-            <div class="step">
-                <h3>Step 3: Define the Data Structure</h3>
-                <p>Configure the webhook body with the following JSON structure:</p>
-                <div class="webhook-url">
-<pre id="webhookBody">{
-  "recordid": "{{subscriber.id}}",
-  "message": "{{last.user.message}}",
-  "name": "{{subscriber.name}}",
-  "metadata": {
-    "flow": "{{flow.name}}",
-    "platform": "manychat"
-  }
-}</pre>
-                    <button class="copy-btn" onclick="copyToClipboard('webhookBody')">Copy</button>
-                </div>
-            </div>
-
-            <div class="step">
-                <h3>Step 4: Activate the Webhook</h3>
-                <p>Connect this webhook to the desired events (new messages, conversation starts, etc.) and save the configuration.</p>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>n8n Webhook Configuration</h2>
-            <div class="webhook-section">
-                <p>Enter the webhook URL provided by n8n that will process our messages:</p>
-                <div class="token-container">
-                    <input type="text" id="n8n-webhook-input" placeholder="Enter the webhook URL from your n8n instance" style="width: 100%;">
-                    <button class="save-btn" onclick="saveN8nWebhook()">Save Webhook</button>
-                </div>
-                <p style="margin-top: 15px; font-style: italic;">Note: n8n provides you with a webhook URL when you create a Webhook node in your workflow. Copy that URL and paste it above.</p>
-            </div>
-
-            <div class="webhook-config-container">
+        <div class="parallax-container">
+            <div class="parallax-bg"></div>
+            <div class="parallax-content">
+                <h2>ManyChat Integration</h2>
+                <p>Configure your ManyChat webhook to connect with our system.</p>
+                
                 <div class="webhook-config">
-                    <h4>n8n Configuration</h4>
-                    <p>In your n8n instance:</p>
-                    <ol>
-                        <li>Create a new workflow</li>
-                        <li>Add a "Webhook" node as trigger</li>
-                        <li>Configure it as follows:
-                            <ul>
-                                <li><strong>Authentication:</strong> None or Header (recommended)</li>
-                                <li><strong>HTTP Method:</strong> POST</li>
-                                <li><strong>Path:</strong> / (default)</li>
-                                <li><strong>Response Mode:</strong> Last Node</li>
-                            </ul>
-                        </li>
-                        <li>Save and activate the workflow</li>
-                        <li>Copy the generated webhook URL and paste it above</li>
-                    </ol>
-                </div>
-
-                <div class="webhook-config">
-                    <h4>n8n Flow Example</h4>
-                    <p>Basic flow for processing messages:</p>
-                    <pre>Webhook → Function (process) → HTTP Request (send response to M5V)</pre>
-                    <p>In the "Function" node, you can access the message with:</p>
-                    <pre>const data = $input.item.json;
-const recordid = data.recordid;
-const message = data.message;</pre>
+                    <div class="config-item">
+                        <label>Webhook URL:</label>
+                        <div class="input-with-copy">
+                            <input type="text" id="manychat-url" value="https://api.m5v.io/webhooks/manychat" readonly>
+                            <button class="copy-btn" data-target="manychat-url"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <small>Use this URL in your ManyChat webhook settings.</small>
+                    </div>
+                    
+                    <div class="config-item">
+                        <label>Authentication Token:</label>
+                        <div class="input-with-copy">
+                            <input type="text" id="manychat-token" value="m5v_mc_token_12345" readonly>
+                            <button class="copy-btn" data-target="manychat-token"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <small>Add this token to your webhook headers for authentication.</small>
+                    </div>
+                    
+                    <div class="setup-steps">
+                        <h3>Setup Steps:</h3>
+                        <ol>
+                            <li>Go to your ManyChat dashboard</li>
+                            <li>Navigate to Settings > Integrations > Webhooks</li>
+                            <li>Add a new webhook with the URL above</li>
+                            <li>Set the content type to "application/json"</li>
+                            <li>Add a header "Authorization" with the token above</li>
+                            <li>Save your settings</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="test-webhook">
+                        <button class="btn" id="test-manychat">Test Connection</button>
+                        <span class="status-indicator" id="manychat-status"></span>
+                    </div>
                 </div>
             </div>
         </div>
-
-        <div class="card">
-            <h2>Advanced Configuration</h2>
-            <p>For advanced options like encryption, authentication headers, or custom response methods, contact your system administrator.</p>
-            
-            <div class="webhook-section">
-                <h3>Authentication Headers</h3>
-                <p>When sending requests to our API, include the following header:</p>
-                <div class="webhook-url">
-                    X-API-Key: <span id="api-key">xxxx-xxxx-xxxx-xxxx</span>
-                    <button class="copy-btn" onclick="copyToClipboard('api-key')">Copy</button>
-                </div>
-                <div class="token-container">
-                    <input type="text" id="api-key-input" value="xxxx-xxxx-xxxx-xxxx" readonly>
-                    <button class="generate-token-btn" onclick="generateApiKey()">Generate New API Key</button>
+        
+        <div class="parallax-container">
+            <div class="parallax-bg"></div>
+            <div class="parallax-content">
+                <h2>n8n Integration</h2>
+                <p>Configure n8n to process your webhook data.</p>
+                
+                <div class="webhook-config">
+                    <div class="config-item">
+                        <label>Webhook URL (from n8n):</label>
+                        <div class="input-with-copy">
+                            <input type="text" id="n8n-url" placeholder="Enter your n8n webhook URL here">
+                            <button class="copy-btn" data-target="n8n-url"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <small>Enter the webhook URL provided by your n8n instance.</small>
+                    </div>
+                    
+                    <div class="config-item">
+                        <label>Authentication Token:</label>
+                        <div class="input-with-copy">
+                            <input type="text" id="n8n-token" value="m5v_n8n_token_67890" readonly>
+                            <button class="copy-btn" data-target="n8n-token"><i class="fas fa-copy"></i></button>
+                        </div>
+                        <small>Add this token to your n8n webhook node for authentication.</small>
+                    </div>
+                    
+                    <div class="setup-steps">
+                        <h3>Setup Steps:</h3>
+                        <ol>
+                            <li>Open your n8n instance</li>
+                            <li>Create a new workflow or edit an existing one</li>
+                            <li>Add a "Webhook" trigger node</li>
+                            <li>Copy the webhook URL from n8n and paste it above</li>
+                            <li>Add the authentication token to your workflow</li>
+                            <li>Save your workflow and activate it</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="test-webhook">
+                        <button class="btn" id="save-n8n">Save Configuration</button>
+                        <button class="btn" id="test-n8n">Test Connection</button>
+                        <span class="status-indicator" id="n8n-status"></span>
+                    </div>
                 </div>
             </div>
-            
-            <div class="webhook-section">
-                <h3>n8n Connection</h3>
-                <p>Configure integration with n8n to process messages:</p>
+        </div>
+        
+        <div class="parallax-container">
+            <div class="parallax-bg"></div>
+            <div class="parallax-content">
+                <h2>Advanced Settings</h2>
+                <p>Configure additional webhook settings.</p>
                 
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label for="n8n-project-name">n8n Project Name:</label>
-                        <input type="text" id="n8n-project-name" placeholder="Ex: message-grouping" value="">
+                <div class="webhook-config">
+                    <div class="config-item">
+                        <label>Retry Attempts:</label>
+                        <select id="retry-attempts">
+                            <option value="1">1</option>
+                            <option value="3" selected>3</option>
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                        </select>
+                        <small>Number of retry attempts if a webhook fails.</small>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="n8n-workflow-id">Workflow ID:</label>
-                        <input type="text" id="n8n-workflow-id" placeholder="Ex: 123456" value="">
+                    <div class="config-item">
+                        <label>Timeout (seconds):</label>
+                        <input type="number" id="timeout" value="30" min="5" max="120">
+                        <small>Maximum time to wait for a webhook response.</small>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="n8n-api-url">n8n API URL:</label>
-                        <input type="text" id="n8n-api-url" placeholder="Ex: https://n8n.yourdomain.com/api/v1" value="">
+                    <div class="config-item">
+                        <label>Logging Level:</label>
+                        <select id="logging-level">
+                            <option value="error">Error Only</option>
+                            <option value="warning">Warning & Error</option>
+                            <option value="info" selected>Info, Warning & Error</option>
+                            <option value="debug">Debug (Verbose)</option>
+                        </select>
+                        <small>Level of detail for webhook logs.</small>
                     </div>
                     
-                    <div class="form-group">
-                        <label for="n8n-api-key">n8n API Key:</label>
-                        <input type="password" id="n8n-api-key" placeholder="Enter your n8n API Key" value="">
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('n8n-api-key')">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                    <div class="test-webhook">
+                        <button class="btn" id="save-advanced">Save Settings</button>
                     </div>
-                    
-                    <button class="save-btn" onclick="saveN8nConfig()">Save n8n Configuration</button>
-                </div>
-            </div>
-            
-            <div class="webhook-section">
-                <h3>Supabase Connection</h3>
-                <p>Configure connection with Supabase to store messages:</p>
-                
-                <div class="settings-form">
-                    <div class="form-group">
-                        <label for="supabase-url">Supabase URL:</label>
-                        <input type="text" id="supabase-url" placeholder="Ex: https://abcdefghijklm.supabase.co" value="">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="supabase-key">Supabase API Key:</label>
-                        <input type="password" id="supabase-key" placeholder="Enter your Supabase API Key" value="">
-                        <button type="button" class="toggle-password" onclick="togglePasswordVisibility('supabase-key')">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="supabase-table">Table Name:</label>
-                        <input type="text" id="supabase-table" placeholder="Ex: messages" value="messages">
-                    </div>
-                    
-                    <button class="save-btn" onclick="saveSupabaseConfig()">Save Supabase Configuration</button>
-                </div>
-                
-                <div class="test-connection-container">
-                    <button class="test-btn" onclick="testSupabaseConnection()">Test Connection</button>
-                    <span id="connection-status"></span>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>M5V Developments &copy; 2023 - Message Grouping Platform</p>
+            <p>M5V Developments &copy; 2023 - Webhook Configuration</p>
         </footer>
     </div>
 
@@ -597,5 +589,40 @@ const message = data.message;</pre>
     
     <!-- Link to JavaScript file -->
     <script src="webhook-settings.js"></script>
+
+    <script>
+        // Initialize the interface
+        document.addEventListener('DOMContentLoaded', function() {
+            // ... existing code ...
+
+            // Parallax effect
+            const parallaxContainers = document.querySelectorAll('.parallax-container');
+            
+            parallaxContainers.forEach(container => {
+                container.addEventListener('mousemove', function(e) {
+                    const rect = container.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const moveX = (x - centerX) / 20;
+                    const moveY = (y - centerY) / 20;
+                    
+                    container.style.transform = `perspective(1000px) rotateY(${moveX}deg) rotateX(${-moveY}deg)`;
+                    
+                    const bg = container.querySelector('.parallax-bg');
+                    bg.style.transform = `translateZ(-10px) translateX(${-moveX * 2}px) translateY(${-moveY * 2}px)`;
+                });
+                
+                container.addEventListener('mouseleave', function() {
+                    container.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
+                    const bg = container.querySelector('.parallax-bg');
+                    bg.style.transform = 'translateZ(-10px) translateX(0) translateY(0)';
+                });
+            });
+        });
+    </script>
 </body>
 </html> 

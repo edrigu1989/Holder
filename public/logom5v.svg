@@ -30,13 +30,6 @@
   <!-- M5V Text with improved styling -->
   <text x="100" y="115" font-family="'Roboto', sans-serif" font-size="46" font-weight="900" fill="url(#textGradient)" text-anchor="middle" filter="url(#dropShadow)">M5V</text>
   
-  <!-- Enhanced Wave Line -->
-  <path d="M50,85 Q70,60 90,85 Q110,110 130,85 Q150,60 170,85" fill="none" stroke="#ffffff" stroke-width="4" stroke-opacity="0.8" stroke-linecap="round" filter="url(#glow)"/>
-  
-  <!-- Subtle Dot Accents -->
-  <circle cx="50" cy="85" r="3" fill="#ffffff" opacity="0.8"/>
-  <circle cx="170" cy="85" r="3" fill="#ffffff" opacity="0.8"/>
-  
   <!-- Abstract Connector Lines -->
   <line x1="30" y1="100" x2="45" y2="100" stroke="#ffffff" stroke-width="2" stroke-opacity="0.4"/>
   <line x1="170" y1="100" x2="185" y2="100" stroke="#ffffff" stroke-width="2" stroke-opacity="0.4"/>
