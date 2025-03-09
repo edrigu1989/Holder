@@ -772,6 +772,21 @@
                     '<i class="fas fa-moon"></i>';
             }
             
+            // Generar URL dinámica basada en la ubicación actual
+            const generateWebhookUrl = function() {
+                // Obtener el dominio actual
+                const currentDomain = window.location.origin;
+                
+                // Crear la URL del webhook
+                const webhookUrl = `${currentDomain}/api/webhooks/manychat`;
+                
+                // Actualizar el campo de entrada
+                document.getElementById('manychat-url').value = webhookUrl;
+            };
+            
+            // Generar la URL al cargar la página
+            generateWebhookUrl();
+            
             // Función para copiar al portapapeles
             const copyButtons = document.querySelectorAll('.copy-btn');
             const notification = document.getElementById('notification');
