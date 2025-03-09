@@ -436,9 +436,103 @@
                 max-height: 200px;
             }
         }
+
+        .user-menu {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9998;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+            font-size: 14px;
+        }
+
+        .user-info i {
+            font-size: 18px;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--bg-white);
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            width: 200px;
+            margin-top: 10px;
+            display: none;
+            z-index: 9999;
+        }
+
+        .user-menu:hover .user-dropdown {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 15px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: background-color 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background-color: var(--bg-light);
+        }
+
+        .dropdown-item:first-child {
+            border-radius: 8px 8px 0 0;
+        }
+
+        .dropdown-item:last-child {
+            border-radius: 0 0 8px 8px;
+        }
     </style>
 </head>
 <body>
+    <!-- Add this at the top of the body, before any other content -->
+    <script>
+        // Check if user is logged in
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(sessionStorage.getItem('m5v_current_user'));
+            if (!currentUser) {
+                // Redirect to login page if not logged in
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+
+    <!-- Add this just before the splash screen div -->
+    <div class="user-menu" id="user-menu">
+        <div class="user-info">
+            <i class="fas fa-user-circle"></i>
+            <span id="username-display">User</span>
+        </div>
+        <div class="user-dropdown">
+            <a href="change-password.html" class="dropdown-item">
+                <i class="fas fa-key"></i> Change Password
+            </a>
+            <a href="#" id="admin-link" class="dropdown-item" style="display: none;">
+                <i class="fas fa-users-cog"></i> User Management
+            </a>
+            <a href="#" id="logout-btn" class="dropdown-item">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
     <!-- Splash screen with logo image -->
     <div class="splash-screen" id="splash-screen">
         <div class="logo-container">
@@ -927,6 +1021,26 @@
                     sendMessage();
                 }
             });
+
+            // User menu functionality
+            const currentUser = JSON.parse(sessionStorage.getItem('m5v_current_user'));
+            if (currentUser) {
+                // Update username display
+                document.getElementById('username-display').textContent = currentUser.username;
+                
+                // Show admin link if user is admin
+                if (currentUser.role === 'admin') {
+                    document.getElementById('admin-link').style.display = 'flex';
+                    document.getElementById('admin-link').href = 'user-management.html';
+                }
+                
+                // Logout button
+                document.getElementById('logout-btn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    sessionStorage.removeItem('m5v_current_user');
+                    window.location.href = 'login.html';
+                });
+            }
         });
     </script>
 </body>
