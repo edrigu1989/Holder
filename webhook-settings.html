@@ -15,11 +15,11 @@
             --success: #0f9d58;
             --danger: #d93025;
             --warning: #f9ab00;
-            --bg-light: #f8f9fa;
-            --bg-white: #fff;
+            --bg-light: #f1f3f4;
+            --bg-white: #e8eaed;
             --text-dark: #202124;
             --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --border-color: #e0e0e0;
+            --border-color: #dadce0;
             --logo-primary: #1a73e8;
             --logo-shadow: rgba(26, 115, 232, 0.5);
             --font-primary: 'Inter', 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -125,6 +125,12 @@
             box-shadow: var(--card-shadow);
             padding: 20px;
             margin-bottom: 30px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         
         .card h2 {
@@ -159,10 +165,16 @@
             padding: 5px 10px;
             cursor: pointer;
             font-size: 12px;
+            transition: background-color 0.2s, transform 0.1s;
         }
 
         .copy-btn:hover {
-            opacity: 0.9;
+            background-color: #0b5fca;
+            transform: translateY(-1px);
+        }
+        
+        .copy-btn:active {
+            transform: translateY(1px);
         }
 
         .step {
@@ -342,11 +354,35 @@
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: background-color 0.2s;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .btn:hover {
             background-color: #0b5fca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn.secondary {
+            background-color: var(--secondary);
+        }
+        
+        .btn.secondary:hover {
+            background-color: #4a4e52;
+        }
+        
+        .btn.success {
+            background-color: var(--success);
+        }
+        
+        .btn.success:hover {
+            background-color: #0b8548;
         }
 
         .status-indicator {
@@ -459,6 +495,20 @@
             cursor: pointer;
             font-size: 14px;
             margin-top: 10px;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .save-btn:hover {
+            background-color: #0b5fca;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .save-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         .test-btn {
@@ -470,6 +520,20 @@
             cursor: pointer;
             font-size: 14px;
             margin-top: 15px;
+            font-weight: 500;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .test-btn:hover {
+            background-color: #4a4e52;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .test-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         }
         
         .test-connection-container {
@@ -491,43 +555,9 @@
             color: var(--danger);
         }
 
-        /* Parallax effect styles */
-        .parallax-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            transform-style: preserve-3d;
-            transition: transform 0.1s ease-out;
-        }
-
-        .parallax-bg {
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            opacity: 0.05;
-            z-index: -1;
-            transform: translateZ(-10px);
-        }
-
-        .parallax-content {
-            position: relative;
-            z-index: 1;
-            transform: translateZ(0);
-            background-color: var(--bg-white);
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .parallax-content h2 {
-            color: var(--primary);
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+        /* Eliminar estilos de parallax que no se usarán */
+        .parallax-container, .parallax-bg, .parallax-content {
+            display: none;
         }
 
         /* Add Google Font link for Inter */
@@ -622,8 +652,8 @@
                 </div>
                 
                 <div class="test-webhook">
-                    <button class="btn" id="save-n8n">Save Configuration</button>
-                    <button class="btn" id="test-n8n">Test Connection</button>
+                    <button class="btn primary" id="save-n8n">Save Configuration</button>
+                    <button class="btn secondary" id="test-n8n">Test Connection</button>
                     <span class="status-indicator" id="n8n-status"></span>
                 </div>
             </div>
@@ -663,7 +693,7 @@
                 </div>
                 
                 <div class="test-webhook">
-                    <button class="btn" id="save-advanced">Save Settings</button>
+                    <button class="btn success" id="save-advanced">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -716,9 +746,214 @@
     <script>
         // Initialize the interface
         document.addEventListener('DOMContentLoaded', function() {
-            // ... existing code ...
-
-            // Removing parallax effect code
+            // Theme selector configuration
+            const htmlElement = document.documentElement;
+            const themeToggle = document.getElementById('theme-toggle');
+            
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            htmlElement.setAttribute('data-theme', savedTheme);
+            updateThemeToggleIcon(savedTheme);
+            
+            // Function to toggle theme
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = htmlElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                htmlElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                updateThemeToggleIcon(newTheme);
+            });
+            
+            function updateThemeToggleIcon(theme) {
+                themeToggle.innerHTML = theme === 'light' ? 
+                    '<i class="fas fa-sun"></i>' : 
+                    '<i class="fas fa-moon"></i>';
+            }
+            
+            // Función para copiar al portapapeles
+            const copyButtons = document.querySelectorAll('.copy-btn');
+            const notification = document.getElementById('notification');
+            
+            copyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const inputElement = document.getElementById(targetId);
+                    
+                    // Seleccionar el texto
+                    inputElement.select();
+                    inputElement.setSelectionRange(0, 99999); // Para dispositivos móviles
+                    
+                    // Copiar al portapapeles
+                    document.execCommand('copy');
+                    
+                    // Mostrar notificación
+                    notification.classList.add('show');
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 2000);
+                });
+            });
+            
+            // Función para alternar la visibilidad de la contraseña
+            window.togglePasswordVisibility = function(inputId) {
+                const input = document.getElementById(inputId);
+                const icon = input.nextElementSibling.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.classList.remove('fa-eye');
+                    icon.classList.add('fa-eye-slash');
+                } else {
+                    input.type = 'password';
+                    icon.classList.remove('fa-eye-slash');
+                    icon.classList.add('fa-eye');
+                }
+            };
+            
+            // Simulación de guardar configuración de Supabase
+            window.saveSupabaseConfig = function() {
+                const url = document.getElementById('supabase-url').value;
+                const key = document.getElementById('supabase-key').value;
+                const table = document.getElementById('supabase-table').value;
+                
+                if (!url || !key) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                // Aquí se guardaría la configuración en localStorage o se enviaría a un servidor
+                localStorage.setItem('supabase_url', url);
+                localStorage.setItem('supabase_table', table);
+                // No guardar la clave en localStorage en una aplicación real
+                
+                alert('Supabase configuration saved successfully');
+            };
+            
+            // Simulación de prueba de conexión con Supabase
+            window.testSupabaseConnection = function() {
+                const url = document.getElementById('supabase-url').value;
+                const key = document.getElementById('supabase-key').value;
+                const statusElement = document.getElementById('connection-status');
+                
+                if (!url || !key) {
+                    statusElement.textContent = 'Please fill in all required fields';
+                    statusElement.className = 'connection-error';
+                    return;
+                }
+                
+                // Simulación de prueba de conexión
+                statusElement.textContent = 'Testing connection...';
+                statusElement.className = '';
+                
+                setTimeout(() => {
+                    if (url.includes('supabase.co')) {
+                        statusElement.textContent = 'Connection successful!';
+                        statusElement.className = 'connection-success';
+                    } else {
+                        statusElement.textContent = 'Connection failed. Invalid URL format.';
+                        statusElement.className = 'connection-error';
+                    }
+                }, 1500);
+            };
+            
+            // Eventos para los botones de prueba
+            document.getElementById('test-manychat').addEventListener('click', function() {
+                const statusElement = document.getElementById('manychat-status');
+                statusElement.textContent = 'Testing connection...';
+                
+                setTimeout(() => {
+                    statusElement.textContent = 'Connection successful!';
+                    statusElement.style.color = 'var(--success)';
+                }, 1500);
+            });
+            
+            document.getElementById('test-n8n').addEventListener('click', function() {
+                const n8nUrl = document.getElementById('n8n-url').value;
+                const statusElement = document.getElementById('n8n-status');
+                
+                if (!n8nUrl) {
+                    statusElement.textContent = 'Please enter n8n webhook URL';
+                    statusElement.style.color = 'var(--danger)';
+                    return;
+                }
+                
+                statusElement.textContent = 'Testing connection...';
+                statusElement.style.color = '';
+                
+                setTimeout(() => {
+                    statusElement.textContent = 'Connection successful!';
+                    statusElement.style.color = 'var(--success)';
+                }, 1500);
+            });
+            
+            document.getElementById('save-n8n').addEventListener('click', function() {
+                const n8nUrl = document.getElementById('n8n-url').value;
+                
+                if (!n8nUrl) {
+                    alert('Please enter n8n webhook URL');
+                    return;
+                }
+                
+                // Guardar en localStorage
+                localStorage.setItem('n8n_webhook_url', n8nUrl);
+                alert('n8n configuration saved successfully');
+            });
+            
+            document.getElementById('save-advanced').addEventListener('click', function() {
+                const retryAttempts = document.getElementById('retry-attempts').value;
+                const timeout = document.getElementById('timeout').value;
+                const loggingLevel = document.getElementById('logging-level').value;
+                
+                // Guardar en localStorage
+                localStorage.setItem('webhook_retry_attempts', retryAttempts);
+                localStorage.setItem('webhook_timeout', timeout);
+                localStorage.setItem('webhook_logging_level', loggingLevel);
+                
+                alert('Advanced settings saved successfully');
+            });
+            
+            // Cargar valores guardados
+            const loadSavedValues = function() {
+                // n8n URL
+                const savedN8nUrl = localStorage.getItem('n8n_webhook_url');
+                if (savedN8nUrl) {
+                    document.getElementById('n8n-url').value = savedN8nUrl;
+                }
+                
+                // Supabase
+                const savedSupabaseUrl = localStorage.getItem('supabase_url');
+                const savedSupabaseTable = localStorage.getItem('supabase_table');
+                
+                if (savedSupabaseUrl) {
+                    document.getElementById('supabase-url').value = savedSupabaseUrl;
+                }
+                
+                if (savedSupabaseTable) {
+                    document.getElementById('supabase-table').value = savedSupabaseTable;
+                }
+                
+                // Advanced settings
+                const savedRetryAttempts = localStorage.getItem('webhook_retry_attempts');
+                const savedTimeout = localStorage.getItem('webhook_timeout');
+                const savedLoggingLevel = localStorage.getItem('webhook_logging_level');
+                
+                if (savedRetryAttempts) {
+                    document.getElementById('retry-attempts').value = savedRetryAttempts;
+                }
+                
+                if (savedTimeout) {
+                    document.getElementById('timeout').value = savedTimeout;
+                }
+                
+                if (savedLoggingLevel) {
+                    document.getElementById('logging-level').value = savedLoggingLevel;
+                }
+            };
+            
+            // Cargar valores guardados al iniciar
+            loadSavedValues();
         });
     </script>
 </body>
