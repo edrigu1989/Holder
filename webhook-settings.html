@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuración de Webhooks - M5V</title>
+    <title>Webhook Configuration - M5V</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Variables para el tema claro */
+            /* Light theme variables */
             --primary: #007bff;
             --secondary: #6c757d;
             --success: #28a745;
@@ -22,7 +22,7 @@
             --logo-shadow: rgba(0, 123, 255, 0.7);
         }
 
-        /* Variables para el tema oscuro */
+        /* Dark theme variables */
         html[data-theme='dark'] {
             --primary: #1e90ff;
             --secondary: #8c8c8c;
@@ -90,7 +90,7 @@
             text-decoration: underline;
         }
 
-        /* Selector de tema */
+        /* Theme selector */
         .theme-toggle {
             position: absolute;
             top: 20px;
@@ -315,7 +315,7 @@
             }
         }
 
-        /* Añadir estos estilos al final de los estilos existentes */
+        /* Add these styles to the end of existing styles */
         .settings-form {
             background-color: var(--bg-light);
             padding: 15px;
@@ -400,46 +400,46 @@
 <body>
     <div class="container">
         <header>
-            <a href="index.html" class="back-link">← Volver al Dashboard</a>
-            <h1>Configuración de Webhooks</h1>
-            <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">☀️</button>
+            <a href="index.html" class="back-link">← Back to Dashboard</a>
+            <h1>Webhook Configuration</h1>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">☀️</button>
         </header>
 
         <div class="card">
-            <h2>Configuración de Webhook para ManyChat</h2>
+            <h2>ManyChat Webhook Configuration</h2>
             <div class="webhook-section">
-                <p>Este es el URL del webhook que debes configurar en ManyChat para recibir mensajes:</p>
+                <p>This is the webhook URL you need to configure in ManyChat to receive messages:</p>
                 <div class="webhook-url" id="manychat-webhook-url">
-                    https://<span id="server-hostname">tu-dominio.com</span>/webhook/manychat/<span id="manychat-token">abc123def456</span>
-                    <button class="copy-btn" onclick="copyToClipboard('manychat-webhook-url')">Copiar</button>
+                    https://<span id="server-hostname">your-domain.com</span>/webhook/manychat/<span id="manychat-token">abc123def456</span>
+                    <button class="copy-btn" onclick="copyToClipboard('manychat-webhook-url')">Copy</button>
                 </div>
                 <div class="token-container">
                     <input type="text" id="manychat-token-input" value="abc123def456" readonly>
-                    <button class="generate-token-btn" onclick="generateToken('manychat')">Generar Nuevo Token</button>
+                    <button class="generate-token-btn" onclick="generateToken('manychat')">Generate New Token</button>
                 </div>
-                <button class="regenerate-btn" onclick="confirmRegenerate('manychat')">Regenerar URL Completo</button>
+                <button class="regenerate-btn" onclick="confirmRegenerate('manychat')">Regenerate Complete URL</button>
             </div>
 
             <div class="step">
-                <h3>Paso 1: Accede a ManyChat</h3>
-                <p>Inicia sesión en tu cuenta de ManyChat y navega a la sección de "Settings" (Configuración).</p>
+                <h3>Step 1: Access ManyChat</h3>
+                <p>Log in to your ManyChat account and navigate to the "Settings" section.</p>
             </div>
 
             <div class="step">
-                <h3>Paso 2: Configura el Webhook</h3>
-                <p>En ManyChat, ve a "Settings" > "API & Webhooks" > "External Requests" y haz clic en "Add New Request".</p>
-                <p>Configura los siguientes valores:</p>
+                <h3>Step 2: Configure the Webhook</h3>
+                <p>In ManyChat, go to "Settings" > "API & Webhooks" > "External Requests" and click on "Add New Request".</p>
+                <p>Configure the following values:</p>
                 <ul>
-                    <li><strong>Name:</strong> M5V Webhook (o cualquier nombre descriptivo)</li>
-                    <li><strong>URL:</strong> Copia el URL de arriba</li>
+                    <li><strong>Name:</strong> M5V Webhook (or any descriptive name)</li>
+                    <li><strong>URL:</strong> Copy the URL above</li>
                     <li><strong>Method:</strong> POST</li>
                     <li><strong>Content Type:</strong> application/json</li>
                 </ul>
             </div>
 
             <div class="step">
-                <h3>Paso 3: Define la Estructura de Datos</h3>
-                <p>Configura el cuerpo del webhook con la siguiente estructura JSON:</p>
+                <h3>Step 3: Define the Data Structure</h3>
+                <p>Configure the webhook body with the following JSON structure:</p>
                 <div class="webhook-url">
 <pre>{
   "recordid": "{{subscriber.id}}",
@@ -450,37 +450,37 @@
     "platform": "manychat"
   }
 }</pre>
-                    <button class="copy-btn" onclick="copyToClipboard('webhookBody')">Copiar</button>
+                    <button class="copy-btn" onclick="copyToClipboard('webhookBody')">Copy</button>
                 </div>
             </div>
 
             <div class="step">
-                <h3>Paso 4: Activa el Webhook</h3>
-                <p>Conecta este webhook a los eventos deseados (nuevos mensajes, inicios de conversación, etc.) y guarda la configuración.</p>
+                <h3>Step 4: Activate the Webhook</h3>
+                <p>Connect this webhook to the desired events (new messages, conversation starts, etc.) and save the configuration.</p>
             </div>
         </div>
 
         <div class="card">
-            <h2>Configuración de Webhook para n8n</h2>
+            <h2>n8n Webhook Configuration</h2>
             <div class="webhook-section">
-                <p>Este es el URL del webhook que debes configurar en n8n para procesar mensajes:</p>
+                <p>This is the webhook URL you need to configure in n8n to process messages:</p>
                 <div class="webhook-url" id="n8n-webhook-url">
-                    https://<span id="server-hostname-n8n">tu-dominio.com</span>/webhook/n8n/<span id="n8n-token">xyz789abc012</span>
-                    <button class="copy-btn" onclick="copyToClipboard('n8n-webhook-url')">Copiar</button>
+                    https://<span id="server-hostname-n8n">your-domain.com</span>/webhook/n8n/<span id="n8n-token">xyz789abc012</span>
+                    <button class="copy-btn" onclick="copyToClipboard('n8n-webhook-url')">Copy</button>
                 </div>
                 <div class="token-container">
                     <input type="text" id="n8n-token-input" value="xyz789abc012" readonly>
-                    <button class="generate-token-btn" onclick="generateToken('n8n')">Generar Nuevo Token</button>
+                    <button class="generate-token-btn" onclick="generateToken('n8n')">Generate New Token</button>
                 </div>
-                <button class="regenerate-btn" onclick="confirmRegenerate('n8n')">Regenerar URL Completo</button>
+                <button class="regenerate-btn" onclick="confirmRegenerate('n8n')">Regenerate Complete URL</button>
             </div>
 
             <div class="webhook-config-container">
                 <div class="webhook-config">
-                    <h4>Configuración en n8n</h4>
-                    <p>Añade un nodo "Webhook" y configúralo así:</p>
+                    <h4>n8n Configuration</h4>
+                    <p>Add a "Webhook" node and configure it as follows:</p>
                     <ul>
-                        <li><strong>Authentication:</strong> None o Header (recomendado)</li>
+                        <li><strong>Authentication:</strong> None or Header (recommended)</li>
                         <li><strong>HTTP Method:</strong> POST</li>
                         <li><strong>Path:</strong> /</li>
                         <li><strong>Response Mode:</strong> Last Node</li>
@@ -488,10 +488,10 @@
                 </div>
 
                 <div class="webhook-config">
-                    <h4>Ejemplo de Flujo en n8n</h4>
-                    <p>Flujo básico para procesar mensajes:</p>
-                    <pre>Webhook → Function (procesar) → HTTP Request (enviar respuesta a M5V)</pre>
-                    <p>En el nodo "Function", puedes acceder al mensaje con:</p>
+                    <h4>n8n Flow Example</h4>
+                    <p>Basic flow for processing messages:</p>
+                    <pre>Webhook → Function (process) → HTTP Request (send response to M5V)</pre>
+                    <p>In the "Function" node, you can access the message with:</p>
                     <pre>const data = $input.item.json;
 const recordid = data.recordid;
 const message = data.message;</pre>
@@ -500,512 +500,91 @@ const message = data.message;</pre>
         </div>
 
         <div class="card">
-            <h2>Configuración Avanzada</h2>
-            <p>Para configurar opciones avanzadas como encriptación, cabeceras de autenticación, o métodos de respuesta personalizados, contacta al administrador del sistema.</p>
+            <h2>Advanced Configuration</h2>
+            <p>For advanced options like encryption, authentication headers, or custom response methods, contact your system administrator.</p>
             
             <div class="webhook-section">
-                <h3>Cabeceras de Autenticación</h3>
-                <p>Cuando envíes peticiones a nuestro API, incluye la siguiente cabecera:</p>
+                <h3>Authentication Headers</h3>
+                <p>When sending requests to our API, include the following header:</p>
                 <div class="webhook-url">
                     X-API-Key: <span id="api-key">xxxx-xxxx-xxxx-xxxx</span>
-                    <button class="copy-btn" onclick="copyToClipboard('api-key')">Copiar</button>
+                    <button class="copy-btn" onclick="copyToClipboard('api-key')">Copy</button>
                 </div>
                 <div class="token-container">
                     <input type="text" id="api-key-input" value="xxxx-xxxx-xxxx-xxxx" readonly>
-                    <button class="generate-token-btn" onclick="generateApiKey()">Generar Nueva API Key</button>
+                    <button class="generate-token-btn" onclick="generateApiKey()">Generate New API Key</button>
                 </div>
             </div>
             
             <div class="webhook-section">
-                <h3>Conexión con n8n</h3>
-                <p>Configura la integración con n8n para procesar mensajes:</p>
+                <h3>n8n Connection</h3>
+                <p>Configure integration with n8n to process messages:</p>
                 
                 <div class="settings-form">
                     <div class="form-group">
-                        <label for="n8n-project-name">Nombre del Proyecto en n8n:</label>
-                        <input type="text" id="n8n-project-name" placeholder="Ej: mensaje-agrupacion" value="">
+                        <label for="n8n-project-name">n8n Project Name:</label>
+                        <input type="text" id="n8n-project-name" placeholder="Ex: message-grouping" value="">
                     </div>
                     
                     <div class="form-group">
-                        <label for="n8n-workflow-id">ID del Workflow:</label>
-                        <input type="text" id="n8n-workflow-id" placeholder="Ej: 123456" value="">
+                        <label for="n8n-workflow-id">Workflow ID:</label>
+                        <input type="text" id="n8n-workflow-id" placeholder="Ex: 123456" value="">
                     </div>
                     
                     <div class="form-group">
-                        <label for="n8n-api-url">URL de la API de n8n:</label>
-                        <input type="text" id="n8n-api-url" placeholder="Ej: https://n8n.tudominio.com/api/v1" value="">
+                        <label for="n8n-api-url">n8n API URL:</label>
+                        <input type="text" id="n8n-api-url" placeholder="Ex: https://n8n.yourdomain.com/api/v1" value="">
                     </div>
                     
                     <div class="form-group">
-                        <label for="n8n-api-key">API Key de n8n:</label>
-                        <input type="password" id="n8n-api-key" placeholder="Ingresa tu API Key de n8n" value="">
+                        <label for="n8n-api-key">n8n API Key:</label>
+                        <input type="password" id="n8n-api-key" placeholder="Enter your n8n API Key" value="">
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('n8n-api-key')">👁️</button>
                     </div>
                     
-                    <button class="save-btn" onclick="saveN8nConfig()">Guardar Configuración de n8n</button>
+                    <button class="save-btn" onclick="saveN8nConfig()">Save n8n Configuration</button>
                 </div>
             </div>
             
             <div class="webhook-section">
-                <h3>Conexión con Supabase</h3>
-                <p>Configura la conexión con Supabase para almacenar mensajes:</p>
+                <h3>Supabase Connection</h3>
+                <p>Configure connection with Supabase to store messages:</p>
                 
                 <div class="settings-form">
                     <div class="form-group">
-                        <label for="supabase-url">URL de Supabase:</label>
-                        <input type="text" id="supabase-url" placeholder="Ej: https://abcdefghijklm.supabase.co" value="">
+                        <label for="supabase-url">Supabase URL:</label>
+                        <input type="text" id="supabase-url" placeholder="Ex: https://abcdefghijklm.supabase.co" value="">
                     </div>
                     
                     <div class="form-group">
-                        <label for="supabase-key">API Key de Supabase:</label>
-                        <input type="password" id="supabase-key" placeholder="Ingresa tu API Key de Supabase" value="">
+                        <label for="supabase-key">Supabase API Key:</label>
+                        <input type="password" id="supabase-key" placeholder="Enter your Supabase API Key" value="">
                         <button type="button" class="toggle-password" onclick="togglePasswordVisibility('supabase-key')">👁️</button>
                     </div>
                     
                     <div class="form-group">
-                        <label for="supabase-table">Nombre de la Tabla:</label>
-                        <input type="text" id="supabase-table" placeholder="Ej: messages" value="messages">
+                        <label for="supabase-table">Table Name:</label>
+                        <input type="text" id="supabase-table" placeholder="Ex: messages" value="messages">
                     </div>
                     
-                    <button class="save-btn" onclick="saveSupabaseConfig()">Guardar Configuración de Supabase</button>
+                    <button class="save-btn" onclick="saveSupabaseConfig()">Save Supabase Configuration</button>
                 </div>
                 
                 <div class="test-connection-container">
-                    <button class="test-btn" onclick="testSupabaseConnection()">Probar Conexión</button>
+                    <button class="test-btn" onclick="testSupabaseConnection()">Test Connection</button>
                     <span id="connection-status"></span>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>M5V Developments &copy; 2023 - Plataforma de Agrupación de Mensajes</p>
+            <p>M5V Developments &copy; 2023 - Message Grouping Platform</p>
         </footer>
     </div>
 
-    <div class="notification" id="notification">¡Copiado al portapapeles!</div>
+    <div class="notification" id="notification">Copied to clipboard!</div>
     
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Cargar información del servidor
-            updateServerInfo();
-            
-            // Cargar configuraciones guardadas
-            loadSavedConfigs();
-            
-            // Configuración del selector de tema
-            const htmlElement = document.documentElement;
-            const themeToggle = document.getElementById('theme-toggle');
-            
-            // Cargar tema guardado
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            htmlElement.setAttribute('data-theme', savedTheme);
-            updateThemeToggleIcon(savedTheme);
-            
-            // Función para alternar el tema
-            themeToggle.addEventListener('click', () => {
-                const currentTheme = htmlElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-                
-                htmlElement.setAttribute('data-theme', newTheme);
-                localStorage.setItem('theme', newTheme);
-                
-                updateThemeToggleIcon(newTheme);
-            });
-        });
-        
-        function updateThemeToggleIcon(theme) {
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
-        }
-        
-        // Actualizar la información del servidor
-        async function updateServerInfo() {
-            try {
-                const hostname = window.location.hostname || 'tu-dominio.com';
-                document.getElementById('server-hostname').textContent = hostname;
-                document.getElementById('server-hostname-n8n').textContent = hostname;
-                
-                // Intentar obtener la configuración del servidor
-                try {
-                    const response = await fetch('/api/config', {
-                        headers: {
-                            'X-API-Key': localStorage.getItem('api-key') || 'xxxx-xxxx-xxxx-xxxx'
-                        }
-                    });
-                    
-                    if (response.ok) {
-                        const config = await response.json();
-                        
-                        // Actualizar tokens de webhook
-                        if (config.webhooks.manychat) {
-                            const manychatToken = config.webhooks.manychat.token;
-                            document.getElementById('manychat-token').textContent = manychatToken;
-                            document.getElementById('manychat-token-input').value = manychatToken;
-                            localStorage.setItem('manychat-token', manychatToken);
-                        }
-                        
-                        if (config.webhooks.n8n) {
-                            const n8nToken = config.webhooks.n8n.token;
-                            document.getElementById('n8n-token').textContent = n8nToken;
-                            document.getElementById('n8n-token-input').value = n8nToken;
-                            localStorage.setItem('n8n-token', n8nToken);
-                        }
-                        
-                        // Actualizar configuración de n8n (si existe)
-                        if (config.n8n) {
-                            document.getElementById('n8n-project-name').value = config.n8n.projectName || '';
-                            document.getElementById('n8n-workflow-id').value = config.n8n.workflowId || '';
-                            document.getElementById('n8n-api-url').value = config.n8n.apiUrl || '';
-                            
-                            // No actualizar la clave API por seguridad, solo usar la local
-                            const n8nLocalConfig = JSON.parse(localStorage.getItem('n8n-config') || '{}');
-                            document.getElementById('n8n-api-key').value = n8nLocalConfig.apiKey || '';
-                        }
-                        
-                        // Actualizar configuración de Supabase (si existe)
-                        if (config.supabase) {
-                            document.getElementById('supabase-url').value = config.supabase.url || '';
-                            document.getElementById('supabase-table').value = config.supabase.table || 'messages';
-                            
-                            // No actualizar la clave API por seguridad, solo usar la local
-                            const supabaseLocalConfig = JSON.parse(localStorage.getItem('supabase-config') || '{}');
-                            document.getElementById('supabase-key').value = supabaseLocalConfig.key || '';
-                        }
-                    }
-                } catch (serverError) {
-                    console.warn('No se pudo obtener configuración del servidor:', serverError);
-                    
-                    // Si hay error, cargar desde localStorage
-                    loadFromLocalStorage();
-                }
-            } catch (error) {
-                console.error('Error al cargar la información del servidor:', error);
-                
-                // Si hay error, cargar desde localStorage
-                loadFromLocalStorage();
-            }
-        }
-        
-        // Cargar configuración desde localStorage
-        function loadFromLocalStorage() {
-            try {
-                // Cargar tokens de webhook
-                const manychatToken = localStorage.getItem('manychat-token') || 'abc123def456';
-                const n8nToken = localStorage.getItem('n8n-token') || 'xyz789abc012';
-                const apiKey = localStorage.getItem('api-key') || 'xxxx-xxxx-xxxx-xxxx';
-                
-                document.getElementById('manychat-token').textContent = manychatToken;
-                document.getElementById('manychat-token-input').value = manychatToken;
-                document.getElementById('n8n-token').textContent = n8nToken;
-                document.getElementById('n8n-token-input').value = n8nToken;
-                document.getElementById('api-key').textContent = apiKey;
-                document.getElementById('api-key-input').value = apiKey;
-                
-                // Cargar configuración de n8n
-                const n8nConfig = JSON.parse(localStorage.getItem('n8n-config') || '{}');
-                document.getElementById('n8n-project-name').value = n8nConfig.projectName || '';
-                document.getElementById('n8n-workflow-id').value = n8nConfig.workflowId || '';
-                document.getElementById('n8n-api-url').value = n8nConfig.apiUrl || '';
-                document.getElementById('n8n-api-key').value = n8nConfig.apiKey || '';
-                
-                // Cargar configuración de Supabase
-                const supabaseConfig = JSON.parse(localStorage.getItem('supabase-config') || '{}');
-                document.getElementById('supabase-url').value = supabaseConfig.url || '';
-                document.getElementById('supabase-key').value = supabaseConfig.key || '';
-                document.getElementById('supabase-table').value = supabaseConfig.table || 'messages';
-            } catch (error) {
-                console.error('Error al cargar configuraciones desde localStorage:', error);
-            }
-        }
-        
-        // Copiar al portapapeles
-        function copyToClipboard(elementId) {
-            const element = document.getElementById(elementId);
-            let text = '';
-            
-            if (elementId === 'manychat-webhook-url' || elementId === 'n8n-webhook-url') {
-                text = element.innerText.replace('Copiar', '').trim();
-            } else if (elementId === 'api-key') {
-                text = element.innerText.trim();
-            } else {
-                // Si es un elemento pre o tiene contenido HTML complejo
-                text = element.innerText.trim();
-            }
-            
-            // Crear un elemento temporal para copiar
-            const tempInput = document.createElement('textarea');
-            tempInput.value = text;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            
-            // Mostrar notificación
-            showNotification('¡Copiado al portapapeles!');
-        }
-        
-        // Generar una nueva API Key
-        function generateApiKey() {
-            const apiKey = 'xxxx-xxxx-xxxx-'.replace(/x/g, () => {
-                return Math.floor(Math.random() * 16).toString(16);
-            }) + Array(4).fill(0).map(() => Math.floor(Math.random() * 16).toString(16)).join('');
-            
-            document.getElementById('api-key').textContent = apiKey;
-            document.getElementById('api-key-input').value = apiKey;
-            
-            // Guardar en localStorage
-            localStorage.setItem('api-key', apiKey);
-            
-            // Enviar la nueva API Key al servidor
-            fetch('/api/update-api-key', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': document.getElementById('api-key-input').value
-                },
-                body: JSON.stringify({ newApiKey: apiKey })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('¡Nueva API Key generada y aplicada!');
-                } else {
-                    showNotification('¡Nueva API Key generada localmente! Error al aplicar en el servidor: ' + data.error, 'warning');
-                }
-            })
-            .catch(error => {
-                console.error('Error al actualizar API Key en el servidor:', error);
-                showNotification('¡Nueva API Key generada localmente! Error al aplicar en el servidor', 'warning');
-            });
-        }
-        
-        // Generar un nuevo token
-        function generateToken(type) {
-            const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
-            let token = '';
-            for (let i = 0; i < 12; i++) {
-                token += characters.charAt(Math.floor(Math.random() * characters.length));
-            }
-            
-            const tokenElement = document.getElementById(`${type}-token`);
-            const tokenInput = document.getElementById(`${type}-token-input`);
-            
-            tokenElement.textContent = token;
-            tokenInput.value = token;
-            
-            // Guardar en localStorage
-            localStorage.setItem(`${type}-token`, token);
-            
-            // Enviar el nuevo token al servidor
-            fetch('/api/update-webhook-token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': document.getElementById('api-key-input').value
-                },
-                body: JSON.stringify({ type, token })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('¡Nuevo token generado y aplicado!');
-                } else {
-                    showNotification('¡Nuevo token generado localmente! Error al aplicar en el servidor: ' + data.error, 'warning');
-                }
-            })
-            .catch(error => {
-                console.error('Error al actualizar token en el servidor:', error);
-                showNotification('¡Nuevo token generado localmente! Error al aplicar en el servidor', 'warning');
-            });
-        }
-        
-        // Confirmar regeneración
-        function confirmRegenerate(type) {
-            if (confirm(`¿Estás seguro de que quieres regenerar el URL completo para ${type}? Esto podría romper las integraciones existentes.`)) {
-                generateToken(type);
-                
-                // Simular un cambio de URL (en producción, esto sería una petición al servidor)
-                const hostname = window.location.hostname || 'tu-dominio.com';
-                document.getElementById(`server-hostname${type === 'n8n' ? '-n8n' : ''}`).textContent = hostname;
-                
-                showNotification('¡URL regenerado correctamente!');
-            }
-        }
-        
-        // Funciones para gestionar configuración de n8n
-        function saveN8nConfig() {
-            const projectName = document.getElementById('n8n-project-name').value.trim();
-            const workflowId = document.getElementById('n8n-workflow-id').value.trim();
-            const apiUrl = document.getElementById('n8n-api-url').value.trim();
-            const apiKey = document.getElementById('n8n-api-key').value.trim();
-            
-            if (!projectName || !apiUrl) {
-                showNotification('Por favor completa los campos requeridos', 'error');
-                return;
-            }
-            
-            // Guardar en localStorage
-            const n8nConfig = {
-                projectName,
-                workflowId,
-                apiUrl,
-                apiKey
-            };
-            
-            localStorage.setItem('n8n-config', JSON.stringify(n8nConfig));
-            
-            // Enviar configuración al servidor
-            fetch('/api/update-n8n-config', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': document.getElementById('api-key-input').value
-                },
-                body: JSON.stringify(n8nConfig)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('Configuración de n8n guardada correctamente');
-                } else {
-                    showNotification('Error al guardar configuración: ' + data.error, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar configuración:', error);
-                showNotification('Error al guardar configuración', 'error');
-            });
-        }
-        
-        // Funciones para gestionar configuración de Supabase
-        function saveSupabaseConfig() {
-            const url = document.getElementById('supabase-url').value.trim();
-            const key = document.getElementById('supabase-key').value.trim();
-            const table = document.getElementById('supabase-table').value.trim();
-            
-            if (!url || !key) {
-                showNotification('Por favor completa los campos requeridos', 'error');
-                return;
-            }
-            
-            // Guardar en localStorage
-            const supabaseConfig = {
-                url,
-                key,
-                table: table || 'messages'
-            };
-            
-            localStorage.setItem('supabase-config', JSON.stringify(supabaseConfig));
-            
-            // Enviar configuración al servidor
-            fetch('/api/update-supabase-config', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': document.getElementById('api-key-input').value
-                },
-                body: JSON.stringify(supabaseConfig)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    showNotification('Configuración de Supabase guardada correctamente');
-                    if (data.connection === 'error') {
-                        setTimeout(() => {
-                            showNotification('Advertencia: ' + data.message, 'warning');
-                        }, 3000);
-                    }
-                } else {
-                    showNotification('Error al guardar configuración: ' + data.error, 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error al guardar configuración:', error);
-                showNotification('Error al guardar configuración', 'error');
-            });
-        }
-        
-        // Probar conexión con Supabase
-        function testSupabaseConnection() {
-            const statusElement = document.getElementById('connection-status');
-            statusElement.className = '';
-            statusElement.textContent = 'Probando conexión...';
-            
-            const url = document.getElementById('supabase-url').value.trim();
-            const key = document.getElementById('supabase-key').value.trim();
-            const table = document.getElementById('supabase-table').value.trim() || 'messages';
-            
-            if (!url || !key) {
-                statusElement.className = 'connection-error';
-                statusElement.textContent = 'Error: Completa los campos de URL y API Key';
-                return;
-            }
-            
-            // Probar conexión a través del servidor
-            fetch('/api/test-supabase-connection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-API-Key': document.getElementById('api-key-input').value
-                },
-                body: JSON.stringify({ url, key, table })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    statusElement.className = 'connection-success';
-                    statusElement.textContent = '✓ Conexión exitosa';
-                } else {
-                    statusElement.className = 'connection-error';
-                    statusElement.textContent = `✗ Error: ${data.message || 'No se pudo conectar'}`;
-                }
-            })
-            .catch(error => {
-                console.error('Error al probar conexión:', error);
-                statusElement.className = 'connection-error';
-                statusElement.textContent = '✗ Error: No se pudo conectar con el servidor';
-            });
-        }
-        
-        // Alternar visibilidad de contraseñas
-        function togglePasswordVisibility(inputId) {
-            const input = document.getElementById(inputId);
-            input.type = input.type === 'password' ? 'text' : 'password';
-        }
-        
-        // Modificar función de notificación para soportar tipos
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.className = 'notification';
-            
-            if (type === 'error') {
-                notification.style.backgroundColor = 'var(--danger)';
-            } else if (type === 'warning') {
-                notification.style.backgroundColor = 'var(--warning)';
-                notification.style.color = 'var(--text-dark)';
-            } else {
-                notification.style.backgroundColor = 'var(--success)';
-            }
-            
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        // Cargar configuraciones guardadas
-        function loadSavedConfigs() {
-            try {
-                // Intentamos cargar desde el servidor primero
-                updateServerInfo();
-            } catch (error) {
-                console.error('Error al cargar configuraciones guardadas:', error);
-                // Si hay error, cargamos desde localStorage
-                loadFromLocalStorage();
-            }
-        }
-    </script>
+    <!-- Link to external JavaScript file -->
+    <script src="webhook-settings.js"></script>
 </body>
 </html> 
