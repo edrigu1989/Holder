@@ -2,7 +2,7 @@
 let serverSettings = {
     hostname: window.location.hostname || 'your-domain.com',
     manychatToken: 'abc123def456',
-    n8nToken: 'xyz789abc012',
+    n8nWebhookUrl: '',
     apiKey: 'xxxx-xxxx-xxxx-xxxx'
 };
 
@@ -71,7 +71,12 @@ function loadSettings() {
     
     // Load values into input fields
     document.getElementById('manychat-token-input').value = serverSettings.manychatToken;
-    document.getElementById('n8n-token-input').value = serverSettings.n8nToken;
+    
+    // Cargar la URL del webhook de n8n si existe
+    if (serverSettings.n8nWebhookUrl) {
+        document.getElementById('n8n-webhook-input').value = serverSettings.n8nWebhookUrl;
+    }
+    
     document.getElementById('api-key-input').value = serverSettings.apiKey;
     
     // Load n8n settings if they exist
@@ -293,4 +298,30 @@ function saveConfigToServer(configType, configData) {
     // This would be a real API call in a production environment
     // Simulating a successful response for demo purposes
     return Promise.resolve({ success: true });
+}
+
+// Nueva función para guardar la URL del webhook de n8n
+function saveN8nWebhook() {
+    const webhookUrl = document.getElementById('n8n-webhook-input').value.trim();
+    
+    if (!webhookUrl) {
+        showNotification('Error: Please enter a valid webhook URL');
+        return;
+    }
+    
+    // Validación básica de URL
+    if (!webhookUrl.startsWith('http://') && !webhookUrl.startsWith('https://')) {
+        showNotification('Error: URL must start with http:// or https://');
+        return;
+    }
+    
+    // Guardar la URL
+    serverSettings.n8nWebhookUrl = webhookUrl;
+    localStorage.setItem('webhookSettings', JSON.stringify(serverSettings));
+    
+    // Mostrar notificación
+    showNotification('n8n webhook URL saved successfully!');
+    
+    // En una aplicación real, también enviarías esto a tu servidor:
+    // saveConfigToServer('n8nWebhook', { url: webhookUrl });
 } 

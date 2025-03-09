@@ -184,8 +184,8 @@
         }
 
         .regenerate-btn {
-            background-color: var(--warning);
-            color: var(--text-dark);
+            background-color: var(--secondary);
+            color: white;
             border: none;
             border-radius: 4px;
             padding: 10px 15px;
@@ -466,28 +466,32 @@
         <div class="card">
             <h2>n8n Webhook Configuration</h2>
             <div class="webhook-section">
-                <p>This is the webhook URL you need to configure in n8n to process messages:</p>
-                <div class="webhook-url" id="n8n-webhook-url">
-                    https://<span id="server-hostname-n8n">your-domain.com</span>/webhook/n8n/<span id="n8n-token">xyz789abc012</span>
-                    <button class="copy-btn" onclick="copyToClipboard('n8n-webhook-url')">Copy</button>
-                </div>
+                <p>Enter the webhook URL provided by n8n that will process our messages:</p>
                 <div class="token-container">
-                    <input type="text" id="n8n-token-input" value="xyz789abc012" readonly>
-                    <button class="generate-token-btn" onclick="generateToken('n8n')">Generate New Token</button>
+                    <input type="text" id="n8n-webhook-input" placeholder="Enter the webhook URL from your n8n instance" style="width: 100%;">
+                    <button class="save-btn" onclick="saveN8nWebhook()">Save Webhook</button>
                 </div>
-                <button class="regenerate-btn" onclick="confirmRegenerate('n8n')">Regenerate Complete URL</button>
+                <p style="margin-top: 15px; font-style: italic;">Note: n8n provides you with a webhook URL when you create a Webhook node in your workflow. Copy that URL and paste it above.</p>
             </div>
 
             <div class="webhook-config-container">
                 <div class="webhook-config">
                     <h4>n8n Configuration</h4>
-                    <p>Add a "Webhook" node and configure it as follows:</p>
-                    <ul>
-                        <li><strong>Authentication:</strong> None or Header (recommended)</li>
-                        <li><strong>HTTP Method:</strong> POST</li>
-                        <li><strong>Path:</strong> /</li>
-                        <li><strong>Response Mode:</strong> Last Node</li>
-                    </ul>
+                    <p>In your n8n instance:</p>
+                    <ol>
+                        <li>Create a new workflow</li>
+                        <li>Add a "Webhook" node as trigger</li>
+                        <li>Configure it as follows:
+                            <ul>
+                                <li><strong>Authentication:</strong> None or Header (recommended)</li>
+                                <li><strong>HTTP Method:</strong> POST</li>
+                                <li><strong>Path:</strong> / (default)</li>
+                                <li><strong>Response Mode:</strong> Last Node</li>
+                            </ul>
+                        </li>
+                        <li>Save and activate the workflow</li>
+                        <li>Copy the generated webhook URL and paste it above</li>
+                    </ol>
                 </div>
 
                 <div class="webhook-config">
