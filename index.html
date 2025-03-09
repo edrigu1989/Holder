@@ -587,6 +587,16 @@
     </style>
 </head>
 <body>
+    <script>
+        // Verificar si es la primera vez que el usuario accede
+        if (!localStorage.getItem('hasVisitedBefore')) {
+            // Marcar que el usuario ha visitado la página
+            localStorage.setItem('hasVisitedBefore', 'true');
+            // Redirigir a la página de introducción
+            window.location.href = 'splash.html';
+        }
+    </script>
+
     <!-- Add this at the top of the body, before any other content -->
     <script>
         // Check if user is logged in
