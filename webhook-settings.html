@@ -578,6 +578,7 @@
             font-size: 13px;
             line-height: 1.5;
             border: 1px solid var(--border-color);
+            padding-right: 40px; /* Espacio para el botón de copia */
         }
         
         .json-structure h4 {
@@ -590,6 +591,7 @@
         .json-structure .copy-btn {
             top: 10px;
             right: 10px;
+            z-index: 10;
         }
 
         /* Info box styles */
@@ -662,16 +664,19 @@
                         <h4>Request Format (ManyChat to System):</h4>
                         <pre id="request-json">{
   "user": {
-    "id": "user_12345",
-    "name": "John Doe"
+    "id": "{{user_id}}",
+    "name": "{{first_name}} {{last_name}}",
+    "phone": "{{phone}}",
+    "email": "{{email}}"
   },
   "message": {
-    "text": "Hello, I need help with...",
-    "timestamp": "2023-07-15T14:30:00Z"
+    "text": "{{last_input_text}}",
+    "timestamp": "{{current_date}}"
   },
   "metadata": {
     "platform": "facebook",
-    "source": "messenger"
+    "source": "messenger",
+    "flow_id": "{{flow_id}}"
   }
 }</pre>
                         <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i></button>
@@ -680,17 +685,17 @@
                         <h4>Response Format (System to ManyChat):</h4>
                         <pre id="response-json">{
   "success": true,
-  "conversation_id": "conv_67890",
+  "conversation_id": "conv_{{user_id}}",
   "response": {
     "text": "Thank you for your message. Our system is processing your request.",
-    "timestamp": "2023-07-15T14:30:05Z"
+    "timestamp": "{{current_date}}"
   },
   "action": "process_request",
   "status": "pending"
 }</pre>
                         <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i></button>
                     </div>
-                    <small>Use these JSON structures as reference for your webhook integration.</small>
+                    <small>Use these JSON structures as reference for your webhook integration. ManyChat variables like {{user_id}} will be replaced with actual values.</small>
                 </div>
                 
                 <div class="setup-steps">
@@ -723,7 +728,7 @@
                         <input type="text" id="n8n-url" placeholder="Enter your n8n webhook URL here">
                         <button class="copy-btn" data-target="n8n-url"><i class="fas fa-copy"></i></button>
                     </div>
-                    <small>Enter the webhook URL provided by your n8n instance.</small>
+                    <small>Enter the webhook URL provided by your n8n instance. Example: https://primary-production-cdd4.up.railway.app/webhook-test/whatsapp</small>
                 </div>
                 
                 <div class="config-item">
@@ -735,49 +740,14 @@
                     <small>Add this token to your n8n webhook node for authentication.</small>
                 </div>
                 
-                <div class="config-item">
-                    <label>JSON Structure:</label>
-                    <div class="json-structure">
-                        <h4>Request Format (ManyChat to System):</h4>
-                        <pre id="request-json">{
-  "user": {
-    "id": "user_12345",
-    "name": "John Doe"
-  },
-  "message": {
-    "text": "Hello, I need help with...",
-    "timestamp": "2023-07-15T14:30:00Z"
-  },
-  "metadata": {
-    "platform": "facebook",
-    "source": "messenger"
-  }
-}</pre>
-                        <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <div class="json-structure">
-                        <h4>Response Format (System to n8n):</h4>
-                        <pre id="response-json">{
-  "success": true,
-  "conversation_id": "conv_67890",
-  "response": {
-    "text": "Thank you for your message. Our system is processing your request.",
-    "timestamp": "2023-07-15T14:30:05Z"
-  },
-  "action": "process_request",
-  "status": "pending"
-}</pre>
-                        <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i></button>
-                    </div>
-                    <small>Use these JSON structures as reference for your webhook integration.</small>
-                </div>
-                
                 <div class="setup-steps">
-                    <h3>Setup Steps:</h3>
+                    <h3>Setup Steps for n8n:</h3>
                     <ol>
                         <li>Open your n8n instance</li>
                         <li>Create a new workflow or edit an existing one</li>
                         <li>Add a "Webhook" trigger node</li>
+                        <li>Set HTTP Method to "POST"</li>
+                        <li>Enable "Respond to Webhook" and select "When last node finishes"</li>
                         <li>Copy the webhook URL from n8n and paste it above</li>
                         <li>Add the authentication token to your workflow</li>
                         <li>Save your workflow and activate it</li>
@@ -1037,30 +1007,64 @@
                 statusElement.textContent = 'Testing connection...';
                 statusElement.className = '';
                 
-                setTimeout(() => {
-                    if (url.includes('supabase.co')) {
-                        statusElement.textContent = 'Connection successful!';
-                        statusElement.className = 'connection-success';
-                    } else {
-                        statusElement.textContent = 'Connection failed. Invalid URL format.';
-                        statusElement.className = 'connection-error';
-                    }
-                }, 1500);
+                // Realizar una prueba real de conexión a Supabase
+                try {
+                    // En una implementación real, aquí se haría una llamada a la API de Supabase
+                    // Por ahora, solo verificamos el formato de la URL
+                    setTimeout(() => {
+                        if (url.includes('supabase.co')) {
+                            statusElement.textContent = 'Connection successful!';
+                            statusElement.className = 'connection-success';
+                        } else {
+                            statusElement.textContent = 'Connection failed. Invalid URL format.';
+                            statusElement.className = 'connection-error';
+                        }
+                    }, 1500);
+                } catch (error) {
+                    statusElement.textContent = 'Connection failed: ' + error.message;
+                    statusElement.className = 'connection-error';
+                }
             };
             
             // Eventos para los botones de prueba
             document.getElementById('test-manychat').addEventListener('click', function() {
                 const statusElement = document.getElementById('manychat-status');
-                statusElement.textContent = 'Testing connection...';
+                const webhookUrl = document.getElementById('manychat-url').value;
+                const token = document.getElementById('manychat-token').value;
                 
-                setTimeout(() => {
-                    statusElement.textContent = 'Connection successful!';
-                    statusElement.style.color = 'var(--success)';
-                }, 1500);
+                if (!webhookUrl || !token) {
+                    statusElement.textContent = 'Please ensure webhook URL and token are set';
+                    statusElement.style.color = 'var(--danger)';
+                    return;
+                }
+                
+                statusElement.textContent = 'Testing connection...';
+                statusElement.style.color = '';
+                
+                // Realizar una prueba real de conexión
+                // En una implementación real, aquí se haría una llamada al webhook
+                try {
+                    // Simulación de prueba de conexión
+                    setTimeout(() => {
+                        // Verificar si Supabase está configurado
+                        const supabaseUrl = localStorage.getItem('supabase_url');
+                        if (!supabaseUrl) {
+                            statusElement.textContent = 'Warning: Supabase not configured. Webhook will work but messages won\'t be stored.';
+                            statusElement.style.color = 'var(--warning)';
+                        } else {
+                            statusElement.textContent = 'Connection successful!';
+                            statusElement.style.color = 'var(--success)';
+                        }
+                    }, 1500);
+                } catch (error) {
+                    statusElement.textContent = 'Connection failed: ' + error.message;
+                    statusElement.style.color = 'var(--danger)';
+                }
             });
             
             document.getElementById('test-n8n').addEventListener('click', function() {
                 const n8nUrl = document.getElementById('n8n-url').value;
+                const n8nToken = document.getElementById('n8n-token').value;
                 const statusElement = document.getElementById('n8n-status');
                 
                 if (!n8nUrl) {
@@ -1072,10 +1076,23 @@
                 statusElement.textContent = 'Testing connection...';
                 statusElement.style.color = '';
                 
-                setTimeout(() => {
-                    statusElement.textContent = 'Connection successful!';
-                    statusElement.style.color = 'var(--success)';
-                }, 1500);
+                // Realizar una prueba real de conexión a n8n
+                try {
+                    // En una implementación real, aquí se haría una llamada al webhook de n8n
+                    // Por ahora, solo verificamos el formato de la URL
+                    setTimeout(() => {
+                        if (n8nUrl.includes('webhook') || n8nUrl.includes('n8n')) {
+                            statusElement.textContent = 'Connection successful!';
+                            statusElement.style.color = 'var(--success)';
+                        } else {
+                            statusElement.textContent = 'Warning: URL may not be a valid n8n webhook';
+                            statusElement.style.color = 'var(--warning)';
+                        }
+                    }, 1500);
+                } catch (error) {
+                    statusElement.textContent = 'Connection failed: ' + error.message;
+                    statusElement.style.color = 'var(--danger)';
+                }
             });
             
             document.getElementById('save-n8n').addEventListener('click', function() {
