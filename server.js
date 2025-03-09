@@ -277,6 +277,156 @@ app.post('/api/respond', verifyApiKey, async (req, res) => {
   }
 });
 
+// API para actualizar la configuración de n8n
+app.post('/api/update-n8n-config', verifyApiKey, async (req, res) => {
+  try {
+    const { projectName, workflowId, apiUrl, apiKey } = req.body;
+    
+    if (!projectName || !apiUrl) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
+    
+    // En producción, guardaríamos esta configuración en la base de datos
+    process.env.N8N_PROJECT_NAME = projectName;
+    process.env.N8N_WORKFLOW_ID = workflowId;
+    process.env.N8N_API_URL = apiUrl;
+    process.env.N8N_API_KEY = apiKey;
+    
+    res.json({ 
+      success: true, 
+      message: 'Configuración de n8n actualizada correctamente' 
+    });
+  } catch (error) {
+    console.error('Error al actualizar configuración de n8n:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// API para actualizar la configuración de Supabase
+app.post('/api/update-supabase-config', verifyApiKey, async (req, res) => {
+  try {
+    const { url, key, table } = req.body;
+    
+    if (!url || !key) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
+    
+    // En producción, guardaríamos esta configuración en la base de datos
+    process.env.SUPABASE_URL = url;
+    process.env.SUPABASE_KEY = key;
+    process.env.SUPABASE_TABLE = table || 'messages';
+    
+    // Intentar reconectar a Supabase con las nuevas credenciales
+    try {
+      const newSupabase = createClient(url, key);
+      
+      // Probar la conexión haciendo una consulta sencilla
+      const { data, error } = await newSupabase
+        .from(process.env.SUPABASE_TABLE)
+        .select('count(*)', { count: 'exact' })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      // Si llegamos aquí, la conexión fue exitosa
+      // Actualizar la conexión global
+      supabase = newSupabase;
+      
+      res.json({ 
+        success: true, 
+        message: 'Configuración de Supabase actualizada correctamente',
+        connection: 'success'
+      });
+    } catch (testError) {
+      console.error('Error al probar conexión:', testError);
+      res.json({ 
+        success: true, 
+        message: 'Configuración guardada pero no se pudo conectar. Verifique las credenciales.',
+        connection: 'error',
+        error: testError.message
+      });
+    }
+  } catch (error) {
+    console.error('Error al actualizar configuración de Supabase:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// API para probar la conexión con Supabase
+app.post('/api/test-supabase-connection', verifyApiKey, async (req, res) => {
+  try {
+    const { url, key, table } = req.body;
+    
+    if (!url || !key) {
+      return res.status(400).json({ error: 'Faltan campos requeridos' });
+    }
+    
+    try {
+      const testSupabase = createClient(url, key);
+      
+      // Probar la conexión haciendo una consulta sencilla
+      const { data, error } = await testSupabase
+        .from(table || 'messages')
+        .select('count(*)', { count: 'exact' })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      res.json({ 
+        success: true, 
+        message: 'Conexión exitosa',
+        data
+      });
+    } catch (testError) {
+      console.error('Error al probar conexión:', testError);
+      res.status(400).json({ 
+        success: false, 
+        message: 'Error al conectar con Supabase',
+        error: testError.message
+      });
+    }
+  } catch (error) {
+    console.error('Error al probar conexión:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+// API para obtener la configuración actual
+app.get('/api/config', verifyApiKey, async (req, res) => {
+  try {
+    const config = {
+      n8n: {
+        projectName: process.env.N8N_PROJECT_NAME || '',
+        workflowId: process.env.N8N_WORKFLOW_ID || '',
+        apiUrl: process.env.N8N_API_URL || '',
+        // No enviar la API key por seguridad
+        hasApiKey: !!process.env.N8N_API_KEY
+      },
+      supabase: {
+        url: process.env.SUPABASE_URL || '',
+        // No enviar la key por seguridad
+        hasKey: !!process.env.SUPABASE_KEY,
+        table: process.env.SUPABASE_TABLE || 'messages'
+      },
+      webhooks: {
+        manychat: {
+          token: process.env.MANYCHAT_TOKEN || 'abc123def456',
+          url: `${req.protocol}://${req.hostname}/webhook/manychat/${process.env.MANYCHAT_TOKEN || 'abc123def456'}`
+        },
+        n8n: {
+          token: process.env.N8N_TOKEN || 'xyz789abc012',
+          url: `${req.protocol}://${req.hostname}/webhook/n8n/${process.env.N8N_TOKEN || 'xyz789abc012'}`
+        }
+      }
+    };
+    
+    res.json(config);
+  } catch (error) {
+    console.error('Error al obtener configuración:', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
 // Procesar mensajes cada 5 segundos
 setInterval(async () => {
   const now = new Date();
@@ -322,8 +472,37 @@ async function processMessages(messages) {
   // En una implementación real, aquí procesarías los mensajes con una IA o reglas
   console.log(`Procesando ${messages.length} mensajes para ${messages[0].recordid}`);
   
-  // Se podría enviar a una API externa o procesar con reglas del negocio
-  // Por ahora retornamos una respuesta genérica
+  // Comprobar si tenemos configuración de n8n
+  if (process.env.N8N_API_URL && process.env.N8N_API_KEY) {
+    try {
+      console.log('Procesando mensajes con n8n');
+      
+      // En producción, realizaríamos una petición HTTP a n8n
+      // Ejemplo:
+      /*
+      const response = await axios.post(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
+        projectName: process.env.N8N_PROJECT_NAME,
+        messages: messages,
+        recordid: messages[0].recordid
+      }, {
+        headers: {
+          'X-N8N-API-KEY': process.env.N8N_API_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      return response.data.response || "Mensaje procesado por n8n";
+      */
+      
+      // Simulación de respuesta de n8n
+      return `Mensaje procesado por n8n (Proyecto: ${process.env.N8N_PROJECT_NAME || 'Default'})`;
+    } catch (error) {
+      console.error('Error al procesar con n8n:', error);
+      return "Error al procesar con n8n. Un agente te responderá pronto.";
+    }
+  }
+  
+  // Si no hay configuración de n8n, usar respuesta predeterminada
   return "Gracias por tu mensaje. Un agente te responderá pronto.";
 }
 
@@ -335,25 +514,42 @@ async function sendResponse(recordid, response) {
     // En una implementación real, aquí realizaríamos una petición HTTP a ManyChat o n8n
     // Ejemplo:
     /*
-    await axios.post('https://api.manychat.com/fb/sending/sendContent', {
-      subscriber_id: recordid,
-      content: {
-        messages: [
-          {
-            type: 'text',
-            text: response
-          }
-        ]
-      }
-    }, {
-      headers: {
-        'Authorization': 'Bearer YOUR_MANYCHAT_API_KEY'
-      }
-    });
+    // Si tenemos configuración para n8n, enviar a través de n8n
+    if (process.env.N8N_API_URL && process.env.N8N_API_KEY) {
+      await axios.post(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
+        projectName: process.env.N8N_PROJECT_NAME,
+        action: 'sendResponse',
+        recordid,
+        response
+      }, {
+        headers: {
+          'X-N8N-API-KEY': process.env.N8N_API_KEY,
+          'Content-Type': 'application/json'
+        }
+      });
+    } else {
+      // Si no, intentar enviar directamente a ManyChat
+      await axios.post('https://api.manychat.com/fb/sending/sendContent', {
+        subscriber_id: recordid,
+        content: {
+          messages: [
+            {
+              type: 'text',
+              text: response
+            }
+          ]
+        }
+      }, {
+        headers: {
+          'Authorization': 'Bearer YOUR_MANYCHAT_API_KEY'
+        }
+      });
+    }
     */
     
     // Guardar respuesta en Supabase para el registro
-    await supabase.from('messages').insert([{ 
+    const tableName = process.env.SUPABASE_TABLE || 'messages';
+    await supabase.from(tableName).insert([{ 
       recordid, 
       message: response, 
       processed: true,
