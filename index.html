@@ -354,6 +354,26 @@
             cursor: not-allowed;
         }
 
+        .start-automation-btn {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .start-automation-btn:hover {
+            background-color: #0c7a44;
+        }
+
+        .start-automation-btn.disabled {
+            background-color: var(--secondary);
+            cursor: not-allowed;
+        }
+
         /* Estilos para el banner de intervención */
         .intervention-banner {
             background-color: var(--warning);
@@ -794,14 +814,30 @@
                         const el = document.createElement('div');
                         el.className = 'conversation-item';
                         el.dataset.id = convo.userId;
+                        
+                        // Comprobar si la automatización está detenida para esta conversación
+                        const isAutomationStopped = localStorage.getItem(`automation_stopped_${convo.userId}`) === 'true';
+                        
+                        let automationBadge, automationButton;
+                        
+                        if (isAutomationStopped) {
+                            automationBadge = `<span class="automation-badge stopped" data-id="${convo.userId}">N8N Detenido</span>`;
+                            automationButton = `<button class="start-automation-btn" data-id="${convo.userId}" onclick="startAutomation('${convo.userId}', event)">
+                                                    Reconectar N8N
+                                                </button>`;
+                        } else {
+                            automationBadge = `<span class="automation-badge active" data-id="${convo.userId}">N8N Activo</span>`;
+                            automationButton = `<button class="stop-automation-btn" data-id="${convo.userId}" onclick="stopAutomation('${convo.userId}', event)">
+                                                    Detener N8N
+                                                </button>`;
+                        }
+                        
                         el.innerHTML = `
                             <div class="conversation-id">${convo.userId}</div>
                             <div class="conversation-preview">${lastMessage}</div>
                             <div class="automation-status">
-                                <span class="automation-badge active" data-id="${convo.userId}">N8N Activo</span>
-                                <button class="stop-automation-btn" data-id="${convo.userId}" onclick="stopAutomation('${convo.userId}', event)">
-                                    Detener N8N
-                                </button>
+                                ${automationBadge}
+                                ${automationButton}
                             </div>
                         `;
                         el.addEventListener('click', () => loadMessages(convo.userId));
@@ -1067,6 +1103,112 @@
                 errorMsg.textContent = 'Error sending message';
                 chatMessages.appendChild(errorMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        // Nueva función para iniciar la automatización N8N para una conversación
+        async function startAutomation(conversationId, event) {
+            // Prevenir que el clic desencadene la selección de conversación
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            // Actualizar la interfaz de usuario
+            const badges = document.querySelectorAll(`.automation-badge[data-id="${conversationId}"]`);
+            const buttons = document.querySelectorAll(`.start-automation-btn[data-id="${conversationId}"]`);
+            
+            badges.forEach(badge => {
+                badge.textContent = 'N8N Activo';
+                badge.classList.remove('stopped');
+                badge.classList.add('active');
+            });
+            
+            buttons.forEach(button => {
+                // Cambiar el botón de reconectar por detener
+                const stopButton = document.createElement('button');
+                stopButton.className = 'stop-automation-btn';
+                stopButton.dataset.id = conversationId;
+                stopButton.textContent = 'Detener N8N';
+                stopButton.onclick = function(e) { stopAutomation(conversationId, e); };
+                
+                button.parentNode.replaceChild(stopButton, button);
+            });
+            
+            // Eliminar el estado en localStorage (en una aplicación real, se guardaría en la base de datos)
+            localStorage.removeItem(`automation_stopped_${conversationId}`);
+            
+            // Si esta es la conversación actualmente cargada, actualizar la interfaz de chat
+            if (currentConversation === conversationId) {
+                const chatMessages = document.getElementById('chat-messages');
+                
+                // Eliminar el banner de intervención si existe
+                const interventionBanner = chatMessages.querySelector('.intervention-banner');
+                if (interventionBanner) {
+                    chatMessages.removeChild(interventionBanner);
+                }
+                
+                // Agregar mensaje de sistema indicando que se ha reconectado
+                const systemMsg = document.createElement('div');
+                systemMsg.className = 'message system';
+                systemMsg.textContent = 'N8N reconectado - Procesamiento automático activado nuevamente';
+                chatMessages.appendChild(systemMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            try {
+                // Aquí harías una llamada a la API para:
+                // 1. Reactivar el procesamiento N8N para esta conversación
+                // 2. Actualizar cualquier marca relevante en la base de datos
+                
+                console.log(`Reactivando automatización N8N para la conversación: ${conversationId}`);
+                
+                // En una implementación real, harías algo como:
+                /*
+                const response = await fetch('/api/start-automation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        conversationId,
+                        timestamp: Date.now(),
+                        agentId: currentUser.username
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to start automation');
+                }
+                */
+                
+                // Esta sería una respuesta exitosa simulada en nuestro ejemplo
+                return { success: true };
+                
+            } catch (error) {
+                console.error('Error al iniciar la automatización:', error);
+                alert('Error al iniciar la automatización. Por favor, inténtelo de nuevo.');
+                
+                // Restablecer la interfaz de usuario si hubo un error
+                badges.forEach(badge => {
+                    badge.textContent = 'N8N Detenido';
+                    badge.classList.remove('active');
+                    badge.classList.add('stopped');
+                });
+                
+                // Revertir a botón de inicio
+                buttons.forEach(button => {
+                    const startButton = document.createElement('button');
+                    startButton.className = 'start-automation-btn';
+                    startButton.dataset.id = conversationId;
+                    startButton.textContent = 'Reconectar N8N';
+                    startButton.onclick = function(e) { startAutomation(conversationId, e); };
+                    
+                    button.parentNode.replaceChild(startButton, button);
+                });
+                
+                localStorage.setItem(`automation_stopped_${conversationId}`, 'true');
+                
+                return { success: false };
             }
         }
         
