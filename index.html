@@ -306,6 +306,71 @@
             text-overflow: ellipsis;
         }
 
+        /* Estilo para el estado de automatización */
+        .automation-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--border-color);
+        }
+
+        .automation-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 11px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .automation-badge.active {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .automation-badge.stopped {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .stop-automation-btn {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .stop-automation-btn:hover {
+            background-color: #b7271e;
+        }
+
+        .stop-automation-btn.disabled {
+            background-color: var(--secondary);
+            cursor: not-allowed;
+        }
+
+        /* Estilos para el banner de intervención */
+        .intervention-banner {
+            background-color: var(--warning);
+            color: var(--bg-light);
+            padding: 10px 15px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .intervention-banner i {
+            margin-right: 8px;
+        }
+
         .chat-main {
             flex: 3;
             display: flex;
@@ -474,7 +539,7 @@
             z-index: 9999;
         }
 
-        .user-menu:hover .user-dropdown {
+        .user-dropdown.show {
             display: block;
         }
 
@@ -732,6 +797,12 @@
                         el.innerHTML = `
                             <div class="conversation-id">${convo.userId}</div>
                             <div class="conversation-preview">${lastMessage}</div>
+                            <div class="automation-status">
+                                <span class="automation-badge active" data-id="${convo.userId}">N8N Activo</span>
+                                <button class="stop-automation-btn" data-id="${convo.userId}" onclick="stopAutomation('${convo.userId}', event)">
+                                    Detener N8N
+                                </button>
+                            </div>
                         `;
                         el.addEventListener('click', () => loadMessages(convo.userId));
                         conversationList.appendChild(el);
@@ -797,6 +868,20 @@
                     
                     // Show the messages
                     chatMessages.innerHTML = '';
+                    
+                    // Check if automation is stopped for this conversation
+                    const isAutomationStopped = localStorage.getItem(`automation_stopped_${conversationId}`) === 'true';
+                    
+                    // If automation is stopped, show the intervention banner
+                    if (isAutomationStopped) {
+                        const interventionBanner = document.createElement('div');
+                        interventionBanner.className = 'intervention-banner';
+                        interventionBanner.innerHTML = `
+                            <span><i class="fas fa-user-shield"></i> Intervención manual activada - N8N detenido</span>
+                        `;
+                        chatMessages.appendChild(interventionBanner);
+                    }
+                    
                     messages.forEach(msg => {
                         const msgEl = document.createElement('div');
                         msgEl.className = `message ${msg.sender}`;
@@ -814,6 +899,103 @@
             } catch (error) {
                 console.error('Error loading messages:', error);
                 chatMessages.innerHTML = '<div class="message system">Error loading messages</div>';
+            }
+        }
+        
+        // Stop N8N automation for a conversation
+        async function stopAutomation(conversationId, event) {
+            // Prevent the click from triggering the conversation selection
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            // Update UI
+            const badges = document.querySelectorAll(`.automation-badge[data-id="${conversationId}"]`);
+            const buttons = document.querySelectorAll(`.stop-automation-btn[data-id="${conversationId}"]`);
+            
+            badges.forEach(badge => {
+                badge.textContent = 'N8N Detenido';
+                badge.classList.remove('active');
+                badge.classList.add('stopped');
+            });
+            
+            buttons.forEach(button => {
+                button.textContent = 'Detenido';
+                button.classList.add('disabled');
+                button.disabled = true;
+            });
+            
+            // Save the state in localStorage (in a real app, you would save to the database)
+            localStorage.setItem(`automation_stopped_${conversationId}`, 'true');
+            
+            // If this is the currently loaded conversation, update the chat interface
+            if (currentConversation === conversationId) {
+                const chatMessages = document.getElementById('chat-messages');
+                
+                // Only add the banner if it doesn't already exist
+                if (!chatMessages.querySelector('.intervention-banner')) {
+                    const interventionBanner = document.createElement('div');
+                    interventionBanner.className = 'intervention-banner';
+                    interventionBanner.innerHTML = `
+                        <span><i class="fas fa-user-shield"></i> Intervención manual activada - N8N detenido</span>
+                    `;
+                    chatMessages.insertBefore(interventionBanner, chatMessages.firstChild);
+                }
+            }
+            
+            try {
+                // Here you would make an API call to:
+                // 1. Stop N8N processing for this conversation
+                // 2. Save the conversation context to Supabase
+                // 3. Update any relevant flags in your database
+                
+                console.log(`Stopping N8N automation for conversation: ${conversationId}`);
+                
+                // Simulation of saving to Supabase
+                console.log(`Saving conversation context to Supabase for: ${conversationId}`);
+                
+                // In a real implementation, you would do something like:
+                /*
+                const response = await fetch('/api/stop-automation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        conversationId,
+                        timestamp: Date.now(),
+                        agentId: currentUser.username
+                    }),
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to stop automation');
+                }
+                */
+                
+                // This would be a simulated successful response in our example
+                return { success: true };
+                
+            } catch (error) {
+                console.error('Error stopping automation:', error);
+                alert('Error al detener la automatización. Por favor, inténtelo de nuevo.');
+                
+                // Reset the UI if there was an error
+                badges.forEach(badge => {
+                    badge.textContent = 'N8N Activo';
+                    badge.classList.remove('stopped');
+                    badge.classList.add('active');
+                });
+                
+                buttons.forEach(button => {
+                    button.textContent = 'Detener N8N';
+                    button.classList.remove('disabled');
+                    button.disabled = false;
+                });
+                
+                localStorage.removeItem(`automation_stopped_${conversationId}`);
+                
+                return { success: false };
             }
         }
         
@@ -845,17 +1027,39 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             try {
+                // Check if automation is stopped for this conversation
+                const isAutomationStopped = localStorage.getItem(`automation_stopped_${currentConversation}`) === 'true';
+                
                 // Here you would send the message to the real API
                 console.log(`Sending message to ${currentConversation}: ${message}`);
+                console.log(`N8N automation status: ${isAutomationStopped ? 'Stopped' : 'Active'}`);
+                
+                // If automation is stopped, you would send directly to the user through your API
+                // without N8N processing, and save to Supabase
                 
                 // Simulation of automatic system response
                 setTimeout(() => {
                     const systemMsg = document.createElement('div');
                     systemMsg.className = 'message system';
-                    systemMsg.textContent = 'Message sent successfully';
+                    
+                    if (isAutomationStopped) {
+                        systemMsg.textContent = 'Mensaje enviado directamente al usuario (N8N detenido)';
+                    } else {
+                        systemMsg.textContent = 'Mensaje enviado y procesado por N8N';
+                    }
+                    
                     chatMessages.appendChild(systemMsg);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Stop automation if it wasn't already stopped
+                    if (!isAutomationStopped) {
+                        stopAutomation(currentConversation);
+                    }
                 }, 500);
+                
+                // In a real implementation, you would save the message to Supabase
+                console.log('Saving message to Supabase for context');
+                
             } catch (error) {
                 console.error('Error sending message:', error);
                 const errorMsg = document.createElement('div');
@@ -1033,6 +1237,27 @@
                     document.getElementById('admin-link').style.display = 'flex';
                     document.getElementById('admin-link').href = 'user-management.html';
                 }
+                
+                // Set up user menu toggle
+                const userInfo = document.querySelector('.user-info');
+                const userDropdown = document.querySelector('.user-dropdown');
+                
+                userInfo.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent the click from bubbling to the document
+                    userDropdown.classList.toggle('show');
+                });
+                
+                // Close the dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userDropdown.contains(e.target) && !userInfo.contains(e.target)) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+                
+                // Prevent closing when clicking inside the dropdown
+                userDropdown.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent propagation to document
+                });
                 
                 // Logout button
                 document.getElementById('logout-btn').addEventListener('click', function(e) {
