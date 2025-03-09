@@ -15,16 +15,16 @@
             --success: #0f9d58;
             --danger: #d93025;
             --warning: #f9ab00;
-            --bg-light: #f8f9fa;
-            --bg-white: #fff;
+            --bg-light: #f1f3f4;
+            --bg-white: #e8eaed;
             --text-dark: #202124;
             --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-            --border-color: #e0e0e0;
+            --border-color: #dadce0;
             --table-row-hover: rgba(26, 115, 232, 0.05);
             --table-row-even: rgba(0, 0, 0, 0.01);
             --logo-primary: #1a73e8;
             --logo-shadow: rgba(26, 115, 232, 0.5);
-            --splash-bg: #f8f9fa;
+            --splash-bg: #f1f3f4;
             --chat-user: #e8f0fe;
             --chat-agent: #f1f8e9;
             --chat-system: #fce8e6;
@@ -699,51 +699,16 @@
     <script>
         // Simulated data for the dashboard
         const simulatedData = {
-            // Generate messages per minute data (simulated)
+            // Generate messages per minute data (sin simulación)
             generateMessagesPerMinute: function() {
-                return Array.from({length: 10}, () => Math.floor(Math.random() * 15) + 1);
+                // Devolver un array vacío en lugar de datos simulados
+                return Array(10).fill(0);
             },
             
-            // Generate queue data (simulated)
+            // Generate queue data (sin simulación)
             generateQueues: function() {
-                const users = ['user123', 'user456', 'user789', 'user321', 'user654'];
-                const messageTemplates = [
-                    'Hello, how are you?',
-                    'I need help with my order',
-                    'I would like more information',
-                    'What is the status of my shipment?',
-                    'Thank you for your attention'
-                ];
-                
-                // Select some random users to have active queues
-                const activeUsers = users.filter(() => Math.random() > 0.3);
-                
-                return activeUsers.map(userId => {
-                    // Generate between 1 and 3 messages for each user
-                    const messageCount = Math.floor(Math.random() * 3) + 1;
-                    const messages = [];
-                    
-                    for (let i = 0; i < messageCount; i++) {
-                        const randomMessageIndex = Math.floor(Math.random() * messageTemplates.length);
-                        const now = Date.now();
-                        const randomTimeOffset = Math.floor(Math.random() * 300000); // 5 minutes in milliseconds
-                        
-                        messages.push({
-                            text: messageTemplates[randomMessageIndex],
-                            timestamp: now - randomTimeOffset
-                        });
-                    }
-                    
-                    // 70% chance of being in "Waiting" state
-                    const status = Math.random() > 0.3 ? 'Waiting' : 'Processed';
-                    
-                    return {
-                        userId,
-                        messages,
-                        status,
-                        timestamp: messages[messages.length - 1].timestamp
-                    };
-                });
+                // Devolver un array vacío en lugar de datos simulados
+                return [];
             }
         };
         
@@ -793,64 +758,16 @@
             document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
         }
         
-        // Load conversations from API
+        // Load conversations from API - Modificado para no mostrar datos simulados
         async function loadConversations() {
             const conversationList = document.getElementById('conversation-list');
-            conversationList.innerHTML = '<div class="message system">Loading conversations...</div>';
+            conversationList.innerHTML = '<div class="message system">Esperando conexiones reales...</div>';
             
-            try {
-                // Simulation of loading - this would connect to the real API
-                setTimeout(() => {
-                    const conversations = simulatedData.generateQueues();
-                    conversationList.innerHTML = '';
-                    
-                    if (conversations.length === 0) {
-                        conversationList.innerHTML = '<div class="message system">No active conversations</div>';
-                        return;
-                    }
-                    
-                    conversations.forEach(convo => {
-                        const lastMessage = convo.messages[convo.messages.length - 1].text;
-                        const el = document.createElement('div');
-                        el.className = 'conversation-item';
-                        el.dataset.id = convo.userId;
-                        
-                        // Comprobar si la automatización está detenida para esta conversación
-                        const isAutomationStopped = localStorage.getItem(`automation_stopped_${convo.userId}`) === 'true';
-                        
-                        let automationBadge, automationButton;
-                        
-                        if (isAutomationStopped) {
-                            automationBadge = `<span class="automation-badge stopped" data-id="${convo.userId}">N8N Detenido</span>`;
-                            automationButton = `<button class="start-automation-btn" data-id="${convo.userId}" onclick="startAutomation('${convo.userId}', event)">
-                                                    Reconectar N8N
-                                                </button>`;
-                        } else {
-                            automationBadge = `<span class="automation-badge active" data-id="${convo.userId}">N8N Activo</span>`;
-                            automationButton = `<button class="stop-automation-btn" data-id="${convo.userId}" onclick="stopAutomation('${convo.userId}', event)">
-                                                    Detener N8N
-                                                </button>`;
-                        }
-                        
-                        el.innerHTML = `
-                            <div class="conversation-id">${convo.userId}</div>
-                            <div class="conversation-preview">${lastMessage}</div>
-                            <div class="automation-status">
-                                ${automationBadge}
-                                ${automationButton}
-                            </div>
-                        `;
-                        el.addEventListener('click', () => loadMessages(convo.userId));
-                        conversationList.appendChild(el);
-                    });
-                }, 1000);
-            } catch (error) {
-                console.error('Error loading conversations:', error);
-                conversationList.innerHTML = '<div class="message system">Error loading conversations</div>';
-            }
+            // Aquí se conectaría a la API real para obtener las conversaciones
+            // Por ahora, dejamos el mensaje de espera
         }
         
-        // Load messages for a conversation
+        // Load messages for a conversation - Modificado para no mostrar datos simulados
         async function loadMessages(conversationId) {
             currentConversation = conversationId;
             
@@ -863,79 +780,13 @@
             });
             
             const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML = '<div class="message system">Loading messages...</div>';
+            chatMessages.innerHTML = '<div class="message system">Esperando mensajes reales...</div>';
             
             document.getElementById('message-input').disabled = false;
             document.getElementById('send-btn').disabled = false;
             
-            try {
-                // Simulation of loading - this would connect to the real API
-                setTimeout(() => {
-                    const conversation = simulatedData.generateQueues().find(q => q.userId === conversationId);
-                    
-                    if (!conversation) {
-                        chatMessages.innerHTML = '<div class="message system">Conversation not found</div>';
-                        return;
-                    }
-                    
-                    // Generate some simulated messages from both sides
-                    const messages = [];
-                    
-                    // User messages
-                    conversation.messages.forEach(msg => {
-                        messages.push({
-                            sender: 'user',
-                            message: msg.text,
-                            timestamp: msg.timestamp
-                        });
-                        
-                        // Sometimes add an agent response
-                        if (Math.random() > 0.3) {
-                            messages.push({
-                                sender: 'agent',
-                                message: 'Thank you for your message. How can I help you?',
-                                timestamp: msg.timestamp + 60000 // 1 minute later
-                            });
-                        }
-                    });
-                    
-                    // Sort by timestamp
-                    messages.sort((a, b) => a.timestamp - b.timestamp);
-                    
-                    // Show the messages
-                    chatMessages.innerHTML = '';
-                    
-                    // Check if automation is stopped for this conversation
-                    const isAutomationStopped = localStorage.getItem(`automation_stopped_${conversationId}`) === 'true';
-                    
-                    // If automation is stopped, show the intervention banner
-                    if (isAutomationStopped) {
-                        const interventionBanner = document.createElement('div');
-                        interventionBanner.className = 'intervention-banner';
-                        interventionBanner.innerHTML = `
-                            <span><i class="fas fa-user-shield"></i> Intervención manual activada - N8N detenido</span>
-                        `;
-                        chatMessages.appendChild(interventionBanner);
-                    }
-                    
-                    messages.forEach(msg => {
-                        const msgEl = document.createElement('div');
-                        msgEl.className = `message ${msg.sender}`;
-                        msgEl.innerHTML = `
-                            <div class="message-sender">${msg.sender === 'user' ? 'User' : 'Agent'}</div>
-                            <div class="message-content">${msg.message}</div>
-                            <div class="message-time">${formatDate(msg.timestamp)}</div>
-                        `;
-                        chatMessages.appendChild(msgEl);
-                    });
-                    
-                    // Scroll to the bottom
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 800);
-            } catch (error) {
-                console.error('Error loading messages:', error);
-                chatMessages.innerHTML = '<div class="message system">Error loading messages</div>';
-            }
+            // Aquí se conectaría a la API real para obtener los mensajes
+            // Por ahora, dejamos el mensaje de espera
         }
         
         // Stop N8N automation for a conversation
@@ -956,9 +807,14 @@
             });
             
             buttons.forEach(button => {
-                button.textContent = 'Detenido';
-                button.classList.add('disabled');
-                button.disabled = true;
+                // Reemplazar el botón de detener por el de reconectar
+                const startButton = document.createElement('button');
+                startButton.className = 'start-automation-btn';
+                startButton.dataset.id = conversationId;
+                startButton.textContent = 'Reconectar N8N';
+                startButton.onclick = function(e) { startAutomation(conversationId, e); };
+                
+                button.parentNode.replaceChild(startButton, button);
             });
             
             // Save the state in localStorage (in a real app, you would save to the database)
@@ -1024,9 +880,13 @@
                 });
                 
                 buttons.forEach(button => {
-                    button.textContent = 'Detener N8N';
-                    button.classList.remove('disabled');
-                    button.disabled = false;
+                    const stopButton = document.createElement('button');
+                    stopButton.className = 'stop-automation-btn';
+                    stopButton.dataset.id = conversationId;
+                    stopButton.textContent = 'Detener N8N';
+                    stopButton.onclick = function(e) { stopAutomation(conversationId, e); };
+                    
+                    button.parentNode.replaceChild(stopButton, button);
                 });
                 
                 localStorage.removeItem(`automation_stopped_${conversationId}`);
@@ -1223,6 +1083,20 @@
                     splashScreen.style.display = "none";
                 }, 1500);
             }, 3500);
+            
+            // Agregar evento beforeunload para avisar al usuario si está dejando la página con n8n desactivado
+            window.addEventListener('beforeunload', function(e) {
+                // Verificar si hay alguna conversación con n8n desactivado
+                const hasStoppedAutomations = Object.keys(localStorage)
+                    .some(key => key.startsWith('automation_stopped_') && localStorage.getItem(key) === 'true');
+                
+                if (hasStoppedAutomations) {
+                    // Mensaje que se mostrará al usuario
+                    const message = 'Tienes conversaciones con N8N desactivado. ¿Estás seguro de que quieres salir?';
+                    e.returnValue = message; // Standard for most browsers
+                    return message; // For some older browsers
+                }
+            });
             
             // Theme selector configuration
             const htmlElement = document.documentElement;
