@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - Mensajes</title>
+    <title>Control Panel - Messages</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         :root {
-            /* Variables para el tema claro */
+            /* Light theme variables */
             --primary: #007bff;
             --secondary: #6c757d;
             --success: #28a745;
@@ -29,7 +29,7 @@
             --chat-system: #ffebee;
         }
 
-        /* Variables para el tema oscuro */
+        /* Dark theme variables */
         html[data-theme='dark'] {
             --primary: #1e90ff;
             --secondary: #8c8c8c;
@@ -67,7 +67,7 @@
             min-height: 100vh;
         }
         
-        /* Pantalla de inicio con logo */
+        /* Splash screen with logo */
         .splash-screen {
             position: fixed;
             top: 0;
@@ -83,7 +83,7 @@
             transition: opacity 1.5s ease-in-out;
         }
         
-        /* Logo CSS personalizado */
+        /* Custom CSS logo */
         .css-logo-container {
             position: relative;
             width: 200px;
@@ -174,7 +174,7 @@
             font-size: 2rem;
         }
 
-        /* Selector de tema */
+        /* Theme selector */
         .theme-toggle {
             position: absolute;
             top: 20px;
@@ -313,7 +313,7 @@
             font-size: 14px;
         }
 
-        /* Interfaz de chat */
+        /* Chat interface */
         .chat-container {
             display: flex;
             height: 600px;
@@ -489,7 +489,7 @@
     </style>
 </head>
 <body>
-    <!-- Pantalla de inicio con logo CSS -->
+    <!-- Splash screen with CSS logo -->
     <div class="splash-screen" id="splash-screen">
         <div class="css-logo-container">
             <div class="logo-circle"></div>
@@ -502,104 +502,104 @@
 
     <div class="container">
         <header>
-            <h1>Panel de Control - Mensajes</h1>
-            <button class="theme-toggle" id="theme-toggle" title="Cambiar tema">☀️</button>
+            <h1>Control Panel - Messages</h1>
+            <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">☀️</button>
         </header>
         
         <div class="card">
-            <h2>Estado del Sistema</h2>
+            <h2>System Status</h2>
             <div>
-                <span class="status-indicator online">Servicio Activo</span>
-                <p>Último mensaje recibido: <strong id="last-update">12:30:45 PM</strong></p>
-                <a href="webhook-settings.html" class="btn" style="background-color: var(--secondary);">Configurar Webhooks</a>
+                <span class="status-indicator online">Service Active</span>
+                <p>Last message received: <strong id="last-update">12:30:45 PM</strong></p>
+                <a href="webhook-settings.html" class="btn" style="background-color: var(--secondary);">Configure Webhooks</a>
             </div>
         </div>
         
         <div class="card">
-            <h2>Mensajes por Minuto</h2>
+            <h2>Messages per Minute</h2>
             <div class="chart-container">
                 <canvas id="messageChart"></canvas>
             </div>
         </div>
         
         <div class="card">
-            <h2>Colas Activas</h2>
-            <button class="btn" id="refresh-btn">Actualizar datos</button>
+            <h2>Active Queues</h2>
+            <button class="btn" id="refresh-btn">Refresh Data</button>
             <div id="queues-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Usuario</th>
-                            <th>Mensajes</th>
-                            <th>Estado</th>
-                            <th>Actualización</th>
+                            <th>User</th>
+                            <th>Messages</th>
+                            <th>Status</th>
+                            <th>Updated</th>
                         </tr>
                     </thead>
                     <tbody id="queue-table">
-                        <!-- Los datos se cargarán dinámicamente -->
+                        <!-- Data will be loaded dynamically -->
                     </tbody>
                 </table>
             </div>
         </div>
         
-        <!-- Interfaz de Chat -->
+        <!-- Chat Interface -->
         <div class="card">
-            <h2>Centro de Mensajes</h2>
+            <h2>Message Center</h2>
             <div class="chat-container">
                 <div class="conversation-list" id="conversation-list">
-                    <!-- Aquí se cargarán las conversaciones -->
+                    <!-- Conversations will be loaded here -->
                 </div>
                 <div class="chat-main">
                     <div class="chat-messages" id="chat-messages">
-                        <!-- Aquí se cargarán los mensajes -->
+                        <!-- Messages will be loaded here -->
                         <div class="message system">
-                            Selecciona una conversación para comenzar
+                            Select a conversation to start
                         </div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="message-input" placeholder="Escribe tu respuesta..." disabled>
-                        <button class="btn" id="send-btn" disabled>Enviar</button>
+                        <input type="text" id="message-input" placeholder="Type your response..." disabled>
+                        <button class="btn" id="send-btn" disabled>Send</button>
                     </div>
                 </div>
             </div>
         </div>
         
         <footer>
-            <p>M5V Developments &copy; 2023 - Plataforma de Agrupación de Mensajes</p>
+            <p>M5V Developments &copy; 2023 - Message Grouping Platform</p>
         </footer>
     </div>
     
     <script>
-        // Datos simulados para el dashboard
+        // Simulated data for the dashboard
         const simulatedData = {
-            // Generar datos de mensajes por minuto (simulados)
+            // Generate messages per minute data (simulated)
             generateMessagesPerMinute: function() {
                 return Array.from({length: 10}, () => Math.floor(Math.random() * 15) + 1);
             },
             
-            // Generar datos de colas (simulados)
+            // Generate queue data (simulated)
             generateQueues: function() {
                 const users = ['user123', 'user456', 'user789', 'user321', 'user654'];
                 const messageTemplates = [
-                    'Hola, ¿cómo estás?',
-                    'Necesito ayuda con mi pedido',
-                    'Quiero más información',
-                    '¿Cuál es el estado de mi envío?',
-                    'Gracias por su atención'
+                    'Hello, how are you?',
+                    'I need help with my order',
+                    'I would like more information',
+                    'What is the status of my shipment?',
+                    'Thank you for your attention'
                 ];
                 
-                // Seleccionar algunos usuarios al azar para tener colas activas
+                // Select some random users to have active queues
                 const activeUsers = users.filter(() => Math.random() > 0.3);
                 
                 return activeUsers.map(userId => {
-                    // Generar entre 1 y 3 mensajes para cada usuario
+                    // Generate between 1 and 3 messages for each user
                     const messageCount = Math.floor(Math.random() * 3) + 1;
                     const messages = [];
                     
                     for (let i = 0; i < messageCount; i++) {
                         const randomMessageIndex = Math.floor(Math.random() * messageTemplates.length);
                         const now = Date.now();
-                        const randomTimeOffset = Math.floor(Math.random() * 300000); // 5 minutos en milisegundos
+                        const randomTimeOffset = Math.floor(Math.random() * 300000); // 5 minutes in milliseconds
                         
                         messages.push({
                             text: messageTemplates[randomMessageIndex],
@@ -607,8 +607,8 @@
                         });
                     }
                     
-                    // 70% de probabilidad de estar en estado "Esperando"
-                    const status = Math.random() > 0.3 ? 'Esperando' : 'Procesado';
+                    // 70% chance of being in "Waiting" state
+                    const status = Math.random() > 0.3 ? 'Waiting' : 'Processed';
                     
                     return {
                         userId,
@@ -620,17 +620,17 @@
             }
         };
         
-        // Formatear fecha para mostrar
+        // Format date for display
         function formatDate(timestamp) {
             const date = new Date(timestamp);
             return date.toLocaleString();
         }
         
-        // Variables globales para la interfaz de chat
+        // Global variables for chat interface
         let currentConversation = null;
         const apiBase = window.location.origin;
         
-        // Actualizar la tabla de colas
+        // Update queue table
         function updateQueueTable() {
             const queues = simulatedData.generateQueues();
             const tbody = document.getElementById('queue-table');
@@ -639,7 +639,7 @@
             if (queues.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="4" style="text-align: center;">No hay colas activas en este momento</td>
+                        <td colspan="4" style="text-align: center;">No active queues at this time</td>
                     </tr>
                 `;
                 return;
@@ -650,7 +650,7 @@
                     `<span class="message-text">${msg.text}</span>`
                 ).join('');
                 
-                const statusClass = queue.status === 'Esperando' ? 'waiting' : 'processed';
+                const statusClass = queue.status === 'Waiting' ? 'waiting' : 'processed';
                 
                 tbody.innerHTML += `
                     <tr>
@@ -662,23 +662,23 @@
                 `;
             });
             
-            // Actualizar la hora del último mensaje
+            // Update last message time
             document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
         }
         
-        // Cargar conversaciones desde la API
+        // Load conversations from API
         async function loadConversations() {
             const conversationList = document.getElementById('conversation-list');
-            conversationList.innerHTML = '<div class="message system">Cargando conversaciones...</div>';
+            conversationList.innerHTML = '<div class="message system">Loading conversations...</div>';
             
             try {
-                // Simulación de carga - esto se conectaría con la API real
+                // Simulation of loading - this would connect to the real API
                 setTimeout(() => {
                     const conversations = simulatedData.generateQueues();
                     conversationList.innerHTML = '';
                     
                     if (conversations.length === 0) {
-                        conversationList.innerHTML = '<div class="message system">No hay conversaciones activas</div>';
+                        conversationList.innerHTML = '<div class="message system">No active conversations</div>';
                         return;
                     }
                     
@@ -696,16 +696,16 @@
                     });
                 }, 1000);
             } catch (error) {
-                console.error('Error al cargar conversaciones:', error);
-                conversationList.innerHTML = '<div class="message system">Error al cargar conversaciones</div>';
+                console.error('Error loading conversations:', error);
+                conversationList.innerHTML = '<div class="message system">Error loading conversations</div>';
             }
         }
         
-        // Cargar mensajes de una conversación
+        // Load messages for a conversation
         async function loadMessages(conversationId) {
             currentConversation = conversationId;
             
-            // Actualizar UI
+            // Update UI
             document.querySelectorAll('.conversation-item').forEach(item => {
                 item.classList.remove('active');
                 if (item.dataset.id === conversationId) {
@@ -714,25 +714,25 @@
             });
             
             const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML = '<div class="message system">Cargando mensajes...</div>';
+            chatMessages.innerHTML = '<div class="message system">Loading messages...</div>';
             
             document.getElementById('message-input').disabled = false;
             document.getElementById('send-btn').disabled = false;
             
             try {
-                // Simulación de carga - esto se conectaría con la API real
+                // Simulation of loading - this would connect to the real API
                 setTimeout(() => {
                     const conversation = simulatedData.generateQueues().find(q => q.userId === conversationId);
                     
                     if (!conversation) {
-                        chatMessages.innerHTML = '<div class="message system">Conversación no encontrada</div>';
+                        chatMessages.innerHTML = '<div class="message system">Conversation not found</div>';
                         return;
                     }
                     
-                    // Generar algunos mensajes simulados de ambos lados
+                    // Generate some simulated messages from both sides
                     const messages = [];
                     
-                    // Mensajes del usuario
+                    // User messages
                     conversation.messages.forEach(msg => {
                         messages.push({
                             sender: 'user',
@@ -740,42 +740,42 @@
                             timestamp: msg.timestamp
                         });
                         
-                        // A veces añadimos una respuesta de agente
+                        // Sometimes add an agent response
                         if (Math.random() > 0.3) {
                             messages.push({
                                 sender: 'agent',
-                                message: 'Gracias por tu mensaje. ¿En qué puedo ayudarte?',
-                                timestamp: msg.timestamp + 60000 // 1 minuto después
+                                message: 'Thank you for your message. How can I help you?',
+                                timestamp: msg.timestamp + 60000 // 1 minute later
                             });
                         }
                     });
                     
-                    // Ordenar por timestamp
+                    // Sort by timestamp
                     messages.sort((a, b) => a.timestamp - b.timestamp);
                     
-                    // Mostrar los mensajes
+                    // Show the messages
                     chatMessages.innerHTML = '';
                     messages.forEach(msg => {
                         const msgEl = document.createElement('div');
                         msgEl.className = `message ${msg.sender}`;
                         msgEl.innerHTML = `
-                            <div class="message-sender">${msg.sender === 'user' ? 'Usuario' : 'Agente'}</div>
+                            <div class="message-sender">${msg.sender === 'user' ? 'User' : 'Agent'}</div>
                             <div class="message-content">${msg.message}</div>
                             <div class="message-time">${formatDate(msg.timestamp)}</div>
                         `;
                         chatMessages.appendChild(msgEl);
                     });
                     
-                    // Scroll al final
+                    // Scroll to the bottom
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }, 800);
             } catch (error) {
-                console.error('Error al cargar mensajes:', error);
-                chatMessages.innerHTML = '<div class="message system">Error al cargar mensajes</div>';
+                console.error('Error loading messages:', error);
+                chatMessages.innerHTML = '<div class="message system">Error loading messages</div>';
             }
         }
         
-        // Enviar un mensaje
+        // Send a message
         async function sendMessage() {
             if (!currentConversation) return;
             
@@ -786,49 +786,49 @@
             
             const chatMessages = document.getElementById('chat-messages');
             
-            // Añadir mensaje a la UI
+            // Add message to UI
             const msgEl = document.createElement('div');
             msgEl.className = 'message agent';
             msgEl.innerHTML = `
-                <div class="message-sender">Agente</div>
+                <div class="message-sender">Agent</div>
                 <div class="message-content">${message}</div>
                 <div class="message-time">${formatDate(Date.now())}</div>
             `;
             chatMessages.appendChild(msgEl);
             
-            // Limpiar input
+            // Clear input
             messageInput.value = '';
             
-            // Scroll al final
+            // Scroll to the bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             try {
-                // Aquí enviarías el mensaje a la API real
-                console.log(`Enviando mensaje a ${currentConversation}: ${message}`);
+                // Here you would send the message to the real API
+                console.log(`Sending message to ${currentConversation}: ${message}`);
                 
-                // Simulación de respuesta automática del sistema
+                // Simulation of automatic system response
                 setTimeout(() => {
                     const systemMsg = document.createElement('div');
                     systemMsg.className = 'message system';
-                    systemMsg.textContent = 'Mensaje enviado correctamente';
+                    systemMsg.textContent = 'Message sent successfully';
                     chatMessages.appendChild(systemMsg);
                     chatMessages.scrollTop = chatMessages.scrollHeight;
                 }, 500);
             } catch (error) {
-                console.error('Error al enviar mensaje:', error);
+                console.error('Error sending message:', error);
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'message system';
-                errorMsg.textContent = 'Error al enviar mensaje';
+                errorMsg.textContent = 'Error sending message';
                 chatMessages.appendChild(errorMsg);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
         
-        // Inicializar la interfaz
+        // Initialize the interface
         document.addEventListener('DOMContentLoaded', function() {
             const splashScreen = document.getElementById('splash-screen');
             
-            // Ocultar el splash screen después de 3.5 segundos
+            // Hide splash screen after 3.5 seconds
             setTimeout(() => {
                 splashScreen.style.opacity = "0";
                 setTimeout(() => {
@@ -836,16 +836,16 @@
                 }, 1500);
             }, 3500);
             
-            // Configuración del selector de tema
+            // Theme selector configuration
             const htmlElement = document.documentElement;
             const themeToggle = document.getElementById('theme-toggle');
             
-            // Cargar tema guardado
+            // Load saved theme
             const savedTheme = localStorage.getItem('theme') || 'light';
             htmlElement.setAttribute('data-theme', savedTheme);
             updateThemeToggleIcon(savedTheme);
             
-            // Función para alternar el tema
+            // Function to toggle theme
             themeToggle.addEventListener('click', () => {
                 const currentTheme = htmlElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'light' ? 'dark' : 'light';
@@ -861,17 +861,17 @@
                 themeToggle.textContent = theme === 'light' ? '☀️' : '🌙';
             }
             
-            // Configurar el gráfico
+            // Configure the chart
             const ctx = document.getElementById('messageChart').getContext('2d');
             let chartData = simulatedData.generateMessagesPerMinute();
             
-            // Configuración base del gráfico
+            // Chart base configuration
             const chartConfig = {
                 type: 'line',
                 data: {
                     labels: Array.from({length: 10}, (_, i) => `-${9-i} min`),
                     datasets: [{
-                        label: 'Mensajes por minuto',
+                        label: 'Messages per minute',
                         data: chartData,
                         fill: true,
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
@@ -902,7 +902,7 @@
                             beginAtZero: true,
                             title: {
                                 display: true,
-                                text: 'Cantidad de mensajes',
+                                text: 'Number of messages',
                                 color: '#666'
                             },
                             ticks: {
@@ -915,7 +915,7 @@
                         x: {
                             title: {
                                 display: true,
-                                text: 'Tiempo',
+                                text: 'Time',
                                 color: '#666'
                             },
                             ticks: {
@@ -945,31 +945,31 @@
                 }
             }
             
-            // Aplicar tema inicial al gráfico
+            // Apply initial theme to chart
             updateChartTheme(savedTheme);
             
-            // Cargar datos iniciales
+            // Load initial data
             updateQueueTable();
             loadConversations();
             
-            // Configurar actualización periódica de datos
+            // Set up periodic data updates
             setInterval(() => {
-                // Actualizar datos del gráfico
+                // Update chart data
                 chartData.shift();
                 chartData.push(Math.floor(Math.random() * 15) + 1);
                 chart.data.datasets[0].data = chartData;
                 chart.update();
                 
-                // Actualizar tabla de colas
+                // Update queue table
                 updateQueueTable();
-            }, 30000); // Actualizar cada 30 segundos
+            }, 30000); // Update every 30 seconds
             
-            // Botón de actualización manual
+            // Manual refresh button
             document.getElementById('refresh-btn').addEventListener('click', function() {
                 updateQueueTable();
             });
             
-            // Configurar envío de mensajes
+            // Set up message sending
             document.getElementById('send-btn').addEventListener('click', sendMessage);
             document.getElementById('message-input').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
