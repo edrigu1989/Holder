@@ -562,6 +562,35 @@
 
         /* Add Google Font link for Inter */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* JSON Structure styles */
+        .json-structure {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .json-structure pre {
+            background-color: var(--bg-white);
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            border: 1px solid var(--border-color);
+        }
+        
+        .json-structure h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .json-structure .copy-btn {
+            top: 10px;
+            right: 10px;
+        }
     </style>
 </head>
 <body>
@@ -595,6 +624,12 @@
                         <button class="copy-btn" data-target="manychat-token"><i class="fas fa-copy"></i></button>
                     </div>
                     <small>Add this token to your webhook headers for authentication.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>Generate New Token:</label>
+                    <button class="btn secondary" id="generate-token">Generate New Webhook Token</button>
+                    <small>Click to generate a new unique webhook token if needed.</small>
                 </div>
                 
                 <div class="setup-steps">
@@ -637,6 +672,43 @@
                         <button class="copy-btn" data-target="n8n-token"><i class="fas fa-copy"></i></button>
                     </div>
                     <small>Add this token to your n8n webhook node for authentication.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>JSON Structure:</label>
+                    <div class="json-structure">
+                        <h4>Request Format (ManyChat to System):</h4>
+                        <pre id="request-json">{
+  "user": {
+    "id": "user_12345",
+    "name": "John Doe"
+  },
+  "message": {
+    "text": "Hello, I need help with...",
+    "timestamp": "2023-07-15T14:30:00Z"
+  },
+  "metadata": {
+    "platform": "facebook",
+    "source": "messenger"
+  }
+}</pre>
+                        <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="json-structure">
+                        <h4>Response Format (System to n8n):</h4>
+                        <pre id="response-json">{
+  "success": true,
+  "conversation_id": "conv_67890",
+  "response": {
+    "text": "Thank you for your message. Our system is processing your request.",
+    "timestamp": "2023-07-15T14:30:05Z"
+  },
+  "action": "process_request",
+  "status": "pending"
+}</pre>
+                        <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <small>Use these JSON structures as reference for your webhook integration.</small>
                 </div>
                 
                 <div class="setup-steps">
@@ -787,6 +859,29 @@
             // Generar la URL al cargar la página
             generateWebhookUrl();
             
+            // Función para generar un token aleatorio
+            const generateRandomToken = function(prefix) {
+                const randomString = Math.random().toString(36).substring(2, 15) + 
+                                    Math.random().toString(36).substring(2, 15);
+                return `${prefix}_${randomString}`;
+            };
+            
+            // Evento para el botón de generar token
+            document.getElementById('generate-token').addEventListener('click', function() {
+                const newToken = generateRandomToken('m5v_mc');
+                document.getElementById('manychat-token').value = newToken;
+                
+                // Guardar el nuevo token en localStorage
+                localStorage.setItem('manychat_token', newToken);
+                
+                // Mostrar notificación
+                notification.textContent = 'New token generated!';
+                notification.classList.add('show');
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            });
+            
             // Función para copiar al portapapeles
             const copyButtons = document.querySelectorAll('.copy-btn');
             const notification = document.getElementById('notification');
@@ -935,6 +1030,12 @@
                 const savedN8nUrl = localStorage.getItem('n8n_webhook_url');
                 if (savedN8nUrl) {
                     document.getElementById('n8n-url').value = savedN8nUrl;
+                }
+                
+                // ManyChat token
+                const savedManyChatToken = localStorage.getItem('manychat_token');
+                if (savedManyChatToken) {
+                    document.getElementById('manychat-token').value = savedManyChatToken;
                 }
                 
                 // Supabase
