@@ -591,6 +591,30 @@
             top: 10px;
             right: 10px;
         }
+
+        /* Info box styles */
+        .info-box {
+            background-color: var(--bg-white);
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .info-box i {
+            color: var(--primary);
+            font-size: 18px;
+            margin-top: 2px;
+        }
+        
+        .info-box p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -620,16 +644,53 @@
                 <div class="config-item">
                     <label>Authentication Token:</label>
                     <div class="input-with-copy">
-                        <input type="text" id="manychat-token" value="m5v_mc_token_12345" readonly>
+                        <input type="text" id="manychat-token" value="mc_12345" placeholder="Enter a simple token">
                         <button class="copy-btn" data-target="manychat-token"><i class="fas fa-copy"></i></button>
                     </div>
                     <small>Add this token to your webhook headers for authentication.</small>
                 </div>
                 
                 <div class="config-item">
-                    <label>Generate New Token:</label>
-                    <button class="btn secondary" id="generate-token">Generate New Webhook Token</button>
-                    <small>Click to generate a new unique webhook token if needed.</small>
+                    <label>Generate New Webhook:</label>
+                    <button class="btn secondary" id="generate-webhook">Generate New Webhook</button>
+                    <small>Click to generate a new webhook URL and path if needed.</small>
+                </div>
+                
+                <div class="config-item">
+                    <label>JSON Structure:</label>
+                    <div class="json-structure">
+                        <h4>Request Format (ManyChat to System):</h4>
+                        <pre id="request-json">{
+  "user": {
+    "id": "user_12345",
+    "name": "John Doe"
+  },
+  "message": {
+    "text": "Hello, I need help with...",
+    "timestamp": "2023-07-15T14:30:00Z"
+  },
+  "metadata": {
+    "platform": "facebook",
+    "source": "messenger"
+  }
+}</pre>
+                        <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <div class="json-structure">
+                        <h4>Response Format (System to ManyChat):</h4>
+                        <pre id="response-json">{
+  "success": true,
+  "conversation_id": "conv_67890",
+  "response": {
+    "text": "Thank you for your message. Our system is processing your request.",
+    "timestamp": "2023-07-15T14:30:05Z"
+  },
+  "action": "process_request",
+  "status": "pending"
+}</pre>
+                        <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i></button>
+                    </div>
+                    <small>Use these JSON structures as reference for your webhook integration.</small>
                 </div>
                 
                 <div class="setup-steps">
@@ -668,7 +729,7 @@
                 <div class="config-item">
                     <label>Authentication Token:</label>
                     <div class="input-with-copy">
-                        <input type="text" id="n8n-token" value="m5v_n8n_token_67890" readonly>
+                        <input type="text" id="n8n-token" value="n8n_67890" placeholder="Enter a simple token">
                         <button class="copy-btn" data-target="n8n-token"><i class="fas fa-copy"></i></button>
                     </div>
                     <small>Add this token to your n8n webhook node for authentication.</small>
@@ -773,7 +834,7 @@
         <!-- Restaurando la sección de Supabase -->
         <div class="card">
             <h2>Supabase Connection</h2>
-            <p>Configure connection with Supabase to store messages:</p>
+            <p>Configure connection with Supabase to store messages and webhook data:</p>
             
             <div class="webhook-section">
                 <div class="settings-form">
@@ -793,6 +854,13 @@
                     <div class="form-group">
                         <label for="supabase-table">Table Name:</label>
                         <input type="text" id="supabase-table" placeholder="Ex: messages" value="messages">
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="info-box">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Supabase connection is required for the webhook system to store and retrieve messages. Without this connection, the system will not be able to maintain conversation history.</p>
+                        </div>
                     </div>
                     
                     <button class="save-btn" onclick="saveSupabaseConfig()">Save Supabase Configuration</button>
@@ -859,23 +927,35 @@
             // Generar la URL al cargar la página
             generateWebhookUrl();
             
-            // Función para generar un token aleatorio
-            const generateRandomToken = function(prefix) {
-                const randomString = Math.random().toString(36).substring(2, 15) + 
-                                    Math.random().toString(36).substring(2, 15);
-                return `${prefix}_${randomString}`;
+            // Función para generar un webhook aleatorio
+            const generateRandomWebhook = function() {
+                // Generar un identificador aleatorio para el webhook
+                const randomId = Math.random().toString(36).substring(2, 8);
+                
+                // Obtener el dominio actual
+                const currentDomain = window.location.origin;
+                
+                // Crear la nueva URL del webhook con el identificador aleatorio
+                const newWebhookUrl = `${currentDomain}/api/webhooks/manychat-${randomId}`;
+                
+                // Actualizar el campo de entrada
+                document.getElementById('manychat-url').value = newWebhookUrl;
+                
+                // Generar un token simple
+                const simpleToken = `mc_${randomId}`;
+                document.getElementById('manychat-token').value = simpleToken;
+                
+                // Guardar en localStorage
+                localStorage.setItem('manychat_webhook_url', newWebhookUrl);
+                localStorage.setItem('manychat_token', simpleToken);
             };
             
-            // Evento para el botón de generar token
-            document.getElementById('generate-token').addEventListener('click', function() {
-                const newToken = generateRandomToken('m5v_mc');
-                document.getElementById('manychat-token').value = newToken;
-                
-                // Guardar el nuevo token en localStorage
-                localStorage.setItem('manychat_token', newToken);
+            // Evento para el botón de generar webhook
+            document.getElementById('generate-webhook').addEventListener('click', function() {
+                generateRandomWebhook();
                 
                 // Mostrar notificación
-                notification.textContent = 'New token generated!';
+                notification.textContent = 'New webhook generated!';
                 notification.classList.add('show');
                 setTimeout(() => {
                     notification.classList.remove('show');
@@ -938,7 +1018,7 @@
                 localStorage.setItem('supabase_table', table);
                 // No guardar la clave en localStorage en una aplicación real
                 
-                alert('Supabase configuration saved successfully');
+                alert('Supabase configuration saved successfully. Your webhook system is now ready to store and retrieve messages.');
             };
             
             // Simulación de prueba de conexión con Supabase
@@ -1026,16 +1106,25 @@
             
             // Cargar valores guardados
             const loadSavedValues = function() {
-                // n8n URL
-                const savedN8nUrl = localStorage.getItem('n8n_webhook_url');
-                if (savedN8nUrl) {
-                    document.getElementById('n8n-url').value = savedN8nUrl;
+                // Webhook URL
+                const savedWebhookUrl = localStorage.getItem('manychat_webhook_url');
+                if (savedWebhookUrl) {
+                    document.getElementById('manychat-url').value = savedWebhookUrl;
+                } else {
+                    // Si no hay URL guardada, generar una nueva
+                    generateWebhookUrl();
                 }
                 
                 // ManyChat token
                 const savedManyChatToken = localStorage.getItem('manychat_token');
                 if (savedManyChatToken) {
                     document.getElementById('manychat-token').value = savedManyChatToken;
+                }
+                
+                // n8n URL
+                const savedN8nUrl = localStorage.getItem('n8n_webhook_url');
+                if (savedN8nUrl) {
+                    document.getElementById('n8n-url').value = savedN8nUrl;
                 }
                 
                 // Supabase
