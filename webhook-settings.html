@@ -6,7 +6,7 @@
     <title>Webhook Configuration - M5V</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             /* Light theme variables */
@@ -78,6 +78,20 @@
         header h1 {
             margin: 0;
             font-size: 2rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        header h1::before {
+            content: "M5V";
+            font-weight: 700;
+            color: var(--primary);
+            margin-right: 10px;
+            background-color: rgba(26, 115, 232, 0.1);
+            padding: 5px 10px;
+            border-radius: 4px;
         }
 
         .back-link {
@@ -100,23 +114,37 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: var(--text);
             border: none;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
             border-radius: 50%;
             width: 40px;
             height: 40px;
-            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
         .theme-toggle:hover {
             background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .theme-toggle i {
+            font-size: 18px;
+        }
+
+        [data-theme="dark"] .theme-toggle {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.3);
         }
         
         .card {
@@ -162,19 +190,47 @@
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 5px 10px;
+            padding: 6px 12px;
             cursor: pointer;
-            font-size: 12px;
-            transition: background-color 0.2s, transform 0.1s;
+            font-size: 13px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .copy-btn i {
+            margin-right: 0;
         }
 
         .copy-btn:hover {
             background-color: #0b5fca;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
         
         .copy-btn:active {
             transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .copy-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .copy-btn:hover::after {
+            opacity: 1;
         }
 
         .step {
@@ -346,27 +402,45 @@
 
         .btn {
             display: inline-block;
-            padding: 10px 16px;
+            padding: 10px 18px;
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            opacity: 0;
+            transition: opacity 0.2s;
         }
 
         .btn:hover {
             background-color: #0b5fca;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover::after {
+            opacity: 1;
         }
         
         .btn:active {
             transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
         
         .btn.secondary {
@@ -402,15 +476,24 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            padding: 15px 20px;
+            padding: 12px 20px;
             background-color: var(--success);
             color: white;
-            border-radius: 4px;
-            box-shadow: var(--card-shadow);
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             opacity: 0;
             transform: translateY(-20px);
-            transition: opacity 0.3s, transform 0.3s;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .notification::before {
+            content: "✓";
+            margin-right: 8px;
+            font-weight: bold;
         }
 
         .notification.show {
@@ -592,6 +675,12 @@
             top: 10px;
             right: 10px;
             z-index: 10;
+            opacity: 0.8;
+            padding: 6px 10px;
+        }
+
+        .json-structure:hover .copy-btn {
+            opacity: 1;
         }
 
         /* Info box styles */
@@ -617,13 +706,32 @@
             font-size: 14px;
             line-height: 1.5;
         }
+
+        /* Añadir estos estilos para centrar correctamente el logo M5V */
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-text {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--primary);
+            text-align: center;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Webhook Configuration</h1>
-            <a href="index.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+            <div class="logo-container">
+                <h1>Webhook Configuration</h1>
+            </div>
+            <a href="index.html" class="back-link">← Back to Dashboard</a>
             <button class="theme-toggle" id="theme-toggle" title="Toggle Theme">
                 <i class="fas fa-sun"></i>
             </button>
@@ -635,21 +743,19 @@
             
             <div class="webhook-config">
                 <div class="config-item">
-                    <label>Webhook URL:</label>
-                    <div class="input-with-copy">
-                        <input type="text" id="manychat-url" value="https://api.m5v.io/webhooks/manychat" readonly>
-                        <button class="copy-btn" data-target="manychat-url"><i class="fas fa-copy"></i></button>
+                    <label for="webhook-url">Webhook URL:</label>
+                    <div class="input-group">
+                        <input type="text" id="webhook-url" class="form-control" readonly>
+                        <button class="copy-btn" data-target="webhook-url"><i class="fas fa-copy"></i> Copy</button>
                     </div>
-                    <small>Use this URL in your ManyChat webhook settings.</small>
                 </div>
                 
                 <div class="config-item">
-                    <label>Authentication Token:</label>
-                    <div class="input-with-copy">
-                        <input type="text" id="manychat-token" value="mc_12345" placeholder="Enter a simple token">
-                        <button class="copy-btn" data-target="manychat-token"><i class="fas fa-copy"></i></button>
+                    <label for="webhook-token">Authentication Token:</label>
+                    <div class="input-group">
+                        <input type="text" id="webhook-token" class="form-control" value="mc_12345" readonly>
+                        <button class="copy-btn" data-target="webhook-token">Copy</button>
                     </div>
-                    <small>Add this token to your webhook headers for authentication.</small>
                 </div>
                 
                 <div class="config-item">
@@ -815,53 +921,21 @@
                 <div class="config-item">
                     <label>ManyChat JSON App Structure:</label>
                     <div class="json-structure">
-                        <pre id="manychat-json-app">{
-  "name": "M5V Integration",
-  "type": "webhook",
-  "request": {
-    "url": "{{Your Webhook URL}}",
-    "method": "POST",
-    "headers": [
-      {
-        "name": "Content-Type",
-        "value": "application/json"
-      },
-      {
-        "name": "Authorization",
-        "value": "{{Your Auth Token}}"
-      }
-    ],
-    "body": {
-      "user": {
-        "id": "{{user_id}}",
-        "name": "{{first_name}} {{last_name}}",
-        "phone": "{{phone}}",
-        "email": "{{email}}"
-      },
-      "message": {
-        "text": "{{last_input_text}}",
-        "timestamp": "{{current_date}}"
-      },
-      "metadata": {
-        "platform": "facebook",
-        "source": "messenger",
-        "flow_id": "{{flow_id}}",
-        "page_id": "{{page_id}}"
-      },
-      "custom_fields": {
-        "weight": "{{custom_field.weight}}",
-        "height": "{{custom_field.height}}",
-        "preferences": "{{custom_field.preferences}}"
-      }
-    }
-  },
-  "response": {
-    "success_path": "$.success",
-    "data_path": "$.data",
-    "error_path": "$.error"
-  }
-}</pre>
-                        <button class="copy-btn" data-target="manychat-json-app"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="manychat-json"><i class="fas fa-copy"></i> Copy</button>
+                        <pre id="manychat-json">
+{
+  "user_id": "{{user_id}}",
+  "first_name": "{{first_name}}",
+  "last_name": "{{last_name}}",
+  "gender": "{{gender}}",
+  "phone": "{{phone}}",
+  "email": "{{email}}",
+  "messenger_id": "{{messenger_user_id}}",
+  "page_id": "{{page_id}}",
+  "action": "new_subscriber",
+  "timestamp": "{{current_date}}"
+}
+                        </pre>
                     </div>
                     <small>Copy this JSON structure and use it in ManyChat to create a custom app that integrates with our system. Replace {{Your Webhook URL}} and {{Your Auth Token}} with your actual values.</small>
                 </div>
@@ -1056,7 +1130,7 @@
         </div>
         
         <footer>
-            <p>M5V Developments &copy; 2023 - Webhook Configuration</p>
+            &copy; 2023 <span class="logo-text">M5V</span> Webhook Manager. All rights reserved.
         </footer>
     </div>
 
@@ -1094,84 +1168,89 @@
                     '<i class="fas fa-moon"></i>';
             }
             
-            // Generar URL dinámica basada en la ubicación actual
-            const generateWebhookUrl = function() {
-                // Obtener el dominio actual
+            // Función para generar la URL del webhook
+            const generateWebhookUrl = () => {
                 const currentDomain = window.location.origin;
-                
-                // Crear la URL del webhook
                 const webhookUrl = `${currentDomain}/api/webhooks/manychat`;
                 
                 // Actualizar el campo de entrada
-                document.getElementById('manychat-url').value = webhookUrl;
+                document.getElementById('webhook-url').value = webhookUrl;
             };
             
-            // Generar la URL al cargar la página
-            generateWebhookUrl();
-            
             // Función para generar un webhook aleatorio
-            const generateRandomWebhook = function() {
-                // Generar un identificador aleatorio para el webhook
-                const randomId = Math.random().toString(36).substring(2, 8);
-                
-                // Obtener el dominio actual
+            const generateRandomWebhook = () => {
+                const randomId = Math.random().toString(36).substring(2, 10);
                 const currentDomain = window.location.origin;
-                
-                // Crear la nueva URL del webhook con el identificador aleatorio
-                const newWebhookUrl = `${currentDomain}/api/webhooks/manychat-${randomId}`;
+                const newWebhookUrl = `${currentDomain}/api/webhooks/manychat/${randomId}`;
                 
                 // Actualizar el campo de entrada
-                document.getElementById('manychat-url').value = newWebhookUrl;
+                document.getElementById('webhook-url').value = newWebhookUrl;
                 
                 // Generar un token simple
                 const simpleToken = `mc_${randomId}`;
-                document.getElementById('manychat-token').value = simpleToken;
+                document.getElementById('webhook-token').value = simpleToken;
                 
                 // Guardar en localStorage
                 localStorage.setItem('manychat_webhook_url', newWebhookUrl);
                 localStorage.setItem('manychat_token', simpleToken);
-            };
-            
-            // Evento para el botón de generar webhook
-            document.getElementById('generate-webhook').addEventListener('click', function() {
-                generateRandomWebhook();
                 
                 // Mostrar notificación
-                notification.textContent = 'New webhook generated!';
-                notification.classList.add('show');
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 2000);
-            });
+                showNotification('New webhook generated!');
+            };
             
-            // Función para copiar al portapapeles
+            // Botón para generar webhook
+            document.getElementById('generate-webhook').addEventListener('click', generateRandomWebhook);
+            
+            // Seleccionar todos los botones de copia
             const copyButtons = document.querySelectorAll('.copy-btn');
             const notification = document.getElementById('notification');
             
+            // Función para mostrar notificación
+            const showNotification = (message) => {
+                notification.textContent = message;
+                notification.classList.add('show');
+                
+                // Ocultar después de 2 segundos
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            };
+            
+            // Agregar evento a cada botón de copia
             copyButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const targetId = this.getAttribute('data-target');
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-target');
                     const inputElement = document.getElementById(targetId);
                     
-                    // Seleccionar el texto
-                    inputElement.select();
-                    inputElement.setSelectionRange(0, 99999); // Para dispositivos móviles
+                    if (inputElement.tagName.toLowerCase() === 'input') {
+                        // Para elementos input
+                        inputElement.select();
+                        document.execCommand('copy');
+                    } else {
+                        // Para elementos pre (JSON)
+                        const range = document.createRange();
+                        range.selectNode(inputElement);
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+                        document.execCommand('copy');
+                        window.getSelection().removeAllRanges();
+                    }
                     
-                    // Copiar al portapapeles
-                    document.execCommand('copy');
+                    // Efecto visual en el botón
+                    button.classList.add('active');
+                    setTimeout(() => {
+                        button.classList.remove('active');
+                    }, 200);
                     
                     // Mostrar notificación
-                    notification.classList.add('show');
-                    setTimeout(() => {
-                        notification.classList.remove('show');
-                    }, 2000);
+                    showNotification('Copied to clipboard!');
                 });
             });
             
             // Función para alternar la visibilidad de la contraseña
-            window.togglePasswordVisibility = function(inputId) {
+            const togglePasswordVisibility = (inputId, iconId) => {
                 const input = document.getElementById(inputId);
-                const icon = input.nextElementSibling.querySelector('i');
+                const icon = document.getElementById(iconId);
                 
                 if (input.type === 'password') {
                     input.type = 'text';
@@ -1184,210 +1263,115 @@
                 }
             };
             
-            // Simulación de guardar configuración de Supabase
-            window.saveSupabaseConfig = function() {
+            // Función para simular guardar configuración de Supabase
+            const saveSupabaseConfig = () => {
                 const url = document.getElementById('supabase-url').value;
                 const key = document.getElementById('supabase-key').value;
-                const table = document.getElementById('supabase-table').value;
                 
                 if (!url || !key) {
-                    alert('Please fill in all required fields');
+                    showNotification('Please fill in all fields');
                     return;
                 }
                 
-                // Aquí se guardaría la configuración en localStorage o se enviaría a un servidor
+                // Guardar en localStorage
                 localStorage.setItem('supabase_url', url);
-                localStorage.setItem('supabase_table', table);
-                // No guardar la clave en localStorage en una aplicación real
+                localStorage.setItem('supabase_key', key);
                 
-                alert('Supabase configuration saved successfully. Your webhook system is now ready to store and retrieve messages.');
+                showNotification('Supabase configuration saved!');
             };
             
-            // Simulación de prueba de conexión con Supabase
-            window.testSupabaseConnection = function() {
-                const url = document.getElementById('supabase-url').value;
-                const key = document.getElementById('supabase-key').value;
-                const statusElement = document.getElementById('connection-status');
+            // Función para probar la conexión con ManyChat
+            document.getElementById('test-manychat').addEventListener('click', function() {
+                const statusElement = document.getElementById('manychat-status');
+                const webhookUrl = document.getElementById('webhook-url').value;
+                const token = document.getElementById('webhook-token').value;
                 
-                if (!url || !key) {
-                    statusElement.textContent = 'Please fill in all required fields';
+                if (!webhookUrl || !token) {
+                    statusElement.textContent = 'Error: Please fill in all fields';
                     statusElement.className = 'connection-error';
                     return;
                 }
                 
-                // Simulación de prueba de conexión
+                // Simular prueba de conexión
                 statusElement.textContent = 'Testing connection...';
                 statusElement.className = '';
                 
-                // Realizar una prueba real de conexión a Supabase
-                try {
-                    // En una implementación real, aquí se haría una llamada a la API de Supabase
-                    // Por ahora, solo verificamos el formato de la URL
-                    setTimeout(() => {
-                        if (url.includes('supabase.co')) {
-                            statusElement.textContent = 'Connection successful!';
-                            statusElement.className = 'connection-success';
-                        } else {
-                            statusElement.textContent = 'Connection failed. Invalid URL format.';
-                            statusElement.className = 'connection-error';
-                        }
-                    }, 1500);
-                } catch (error) {
-                    statusElement.textContent = 'Connection failed: ' + error.message;
-                    statusElement.className = 'connection-error';
-                }
-            };
-            
-            // Eventos para los botones de prueba
-            document.getElementById('test-manychat').addEventListener('click', function() {
-                const statusElement = document.getElementById('manychat-status');
-                const webhookUrl = document.getElementById('manychat-url').value;
-                const token = document.getElementById('manychat-token').value;
-                
-                if (!webhookUrl || !token) {
-                    statusElement.textContent = 'Please ensure webhook URL and token are set';
-                    statusElement.style.color = 'var(--danger)';
-                    return;
-                }
-                
-                statusElement.textContent = 'Testing connection...';
-                statusElement.style.color = '';
-                
-                // Realizar una prueba real de conexión
-                // En una implementación real, aquí se haría una llamada al webhook
-                try {
-                    // Simulación de prueba de conexión
-                    setTimeout(() => {
-                        // Verificar si Supabase está configurado
-                        const supabaseUrl = localStorage.getItem('supabase_url');
-                        if (!supabaseUrl) {
-                            statusElement.textContent = 'Warning: Supabase not configured. Webhook will work but messages won\'t be stored.';
-                            statusElement.style.color = 'var(--warning)';
-                        } else {
-                            statusElement.textContent = 'Connection successful!';
-                            statusElement.style.color = 'var(--success)';
-                        }
-                    }, 1500);
-                } catch (error) {
-                    statusElement.textContent = 'Connection failed: ' + error.message;
-                    statusElement.style.color = 'var(--danger)';
-                }
+                // Simular respuesta después de 1 segundo
+                setTimeout(() => {
+                    const success = Math.random() > 0.2; // 80% de probabilidad de éxito
+                    
+                    if (success) {
+                        statusElement.textContent = 'Connection successful!';
+                        statusElement.className = 'connection-success';
+                    } else {
+                        statusElement.textContent = 'Connection failed. Please check your URL and token.';
+                        statusElement.className = 'connection-error';
+                    }
+                }, 1000);
             });
             
-            document.getElementById('test-n8n').addEventListener('click', function() {
-                const n8nUrl = document.getElementById('n8n-url').value;
-                const n8nToken = document.getElementById('n8n-token').value;
-                const statusElement = document.getElementById('n8n-status');
-                
-                if (!n8nUrl) {
-                    statusElement.textContent = 'Please enter n8n webhook URL';
-                    statusElement.style.color = 'var(--danger)';
-                    return;
-                }
-                
-                statusElement.textContent = 'Testing connection...';
-                statusElement.style.color = '';
-                
-                // Realizar una prueba real de conexión a n8n
-                try {
-                    // En una implementación real, aquí se haría una llamada al webhook de n8n
-                    // Por ahora, solo verificamos el formato de la URL
-                    setTimeout(() => {
-                        if (n8nUrl.includes('webhook') || n8nUrl.includes('n8n')) {
-                            statusElement.textContent = 'Connection successful!';
-                            statusElement.style.color = 'var(--success)';
-                        } else {
-                            statusElement.textContent = 'Warning: URL may not be a valid n8n webhook';
-                            statusElement.style.color = 'var(--warning)';
-                        }
-                    }, 1500);
-                } catch (error) {
-                    statusElement.textContent = 'Connection failed: ' + error.message;
-                    statusElement.style.color = 'var(--danger)';
-                }
-            });
-            
-            document.getElementById('save-n8n').addEventListener('click', function() {
-                const n8nUrl = document.getElementById('n8n-url').value;
-                
-                if (!n8nUrl) {
-                    alert('Please enter n8n webhook URL');
-                    return;
-                }
-                
-                // Guardar en localStorage
-                localStorage.setItem('n8n_webhook_url', n8nUrl);
-                alert('n8n configuration saved successfully');
-            });
-            
-            document.getElementById('save-advanced').addEventListener('click', function() {
-                const retryAttempts = document.getElementById('retry-attempts').value;
-                const timeout = document.getElementById('timeout').value;
-                const loggingLevel = document.getElementById('logging-level').value;
-                
-                // Guardar en localStorage
-                localStorage.setItem('webhook_retry_attempts', retryAttempts);
-                localStorage.setItem('webhook_timeout', timeout);
-                localStorage.setItem('webhook_logging_level', loggingLevel);
-                
-                alert('Advanced settings saved successfully');
-            });
-            
-            // Cargar valores guardados
-            const loadSavedValues = function() {
-                // Webhook URL
+            // Cargar configuración guardada al iniciar
+            document.addEventListener('DOMContentLoaded', () => {
+                // Cargar URL del webhook
                 const savedWebhookUrl = localStorage.getItem('manychat_webhook_url');
                 if (savedWebhookUrl) {
-                    document.getElementById('manychat-url').value = savedWebhookUrl;
+                    document.getElementById('webhook-url').value = savedWebhookUrl;
                 } else {
                     // Si no hay URL guardada, generar una nueva
                     generateWebhookUrl();
                 }
                 
-                // ManyChat token
+                // Cargar token
                 const savedManyChatToken = localStorage.getItem('manychat_token');
                 if (savedManyChatToken) {
-                    document.getElementById('manychat-token').value = savedManyChatToken;
+                    document.getElementById('webhook-token').value = savedManyChatToken;
                 }
                 
-                // n8n URL
-                const savedN8nUrl = localStorage.getItem('n8n_webhook_url');
-                if (savedN8nUrl) {
-                    document.getElementById('n8n-url').value = savedN8nUrl;
+                // Inicializar tema
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', currentTheme);
+                
+                // Actualizar icono del tema
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                if (themeToggleBtn) {
+                    const themeIcon = themeToggleBtn.querySelector('i');
+                    if (currentTheme === 'dark') {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
+                    } else {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
+                    }
                 }
+            });
+            
+            // Cambiar tema
+            const toggleTheme = () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
                 
-                // Supabase
-                const savedSupabaseUrl = localStorage.getItem('supabase_url');
-                const savedSupabaseTable = localStorage.getItem('supabase_table');
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
                 
-                if (savedSupabaseUrl) {
-                    document.getElementById('supabase-url').value = savedSupabaseUrl;
-                }
-                
-                if (savedSupabaseTable) {
-                    document.getElementById('supabase-table').value = savedSupabaseTable;
-                }
-                
-                // Advanced settings
-                const savedRetryAttempts = localStorage.getItem('webhook_retry_attempts');
-                const savedTimeout = localStorage.getItem('webhook_timeout');
-                const savedLoggingLevel = localStorage.getItem('webhook_logging_level');
-                
-                if (savedRetryAttempts) {
-                    document.getElementById('retry-attempts').value = savedRetryAttempts;
-                }
-                
-                if (savedTimeout) {
-                    document.getElementById('timeout').value = savedTimeout;
-                }
-                
-                if (savedLoggingLevel) {
-                    document.getElementById('logging-level').value = savedLoggingLevel;
+                // Actualizar icono
+                const themeToggleBtn = document.getElementById('theme-toggle');
+                if (themeToggleBtn) {
+                    const themeIcon = themeToggleBtn.querySelector('i');
+                    if (newTheme === 'dark') {
+                        themeIcon.classList.remove('fa-sun');
+                        themeIcon.classList.add('fa-moon');
+                    } else {
+                        themeIcon.classList.remove('fa-moon');
+                        themeIcon.classList.add('fa-sun');
+                    }
                 }
             };
             
-            // Cargar valores guardados al iniciar
-            loadSavedValues();
+            // Botón para cambiar tema
+            const themeToggleButton = document.getElementById('theme-toggle');
+            if (themeToggleButton) {
+                themeToggleButton.addEventListener('click', toggleTheme);
+            }
         });
     </script>
 </body>
