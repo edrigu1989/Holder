@@ -192,65 +192,59 @@
         .webhook-url {
             background-color: var(--bg-light);
             padding: 15px;
+            padding-right: 75px;
             border-radius: 5px;
             font-family: monospace;
             margin: 15px 0;
-            position: relative;
             word-break: break-all;
-            padding-right: 80px;
         }
 
         .copy-btn {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background-color: var(--primary);
+            background-color: #4285f4;
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 6px 12px;
+            padding: 5px 10px;
+            font-size: 12px;
             cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 5;
             width: auto;
-            min-width: 70px;
+            min-width: 60px;
+            height: 28px;
         }
 
         .copy-btn i {
             margin-right: 5px;
+            font-size: 12px;
         }
 
         .copy-btn:hover {
-            background-color: #0b5fca;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            background-color: #1a73e8;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
-        
+
         .copy-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            transform: translateY(-50%) scale(0.95);
         }
 
-        .copy-btn::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            opacity: 0;
-            transition: opacity 0.2s;
+        /* Estilo para el efecto active */
+        .copy-btn.active {
+            background-color: #34a853;
+            transform: translateY(-50%) scale(0.95);
         }
 
-        .copy-btn:hover::after {
-            opacity: 1;
+        /* Ajuste para el efecto active en json-structure */
+        .json-structure .copy-btn.active {
+            transform: scale(0.95);
         }
 
         .step {
@@ -366,22 +360,41 @@
             font-size: 15px;
         }
 
-        .input-with-copy {
+        .input-group, .input-with-copy {
             position: relative;
-            margin-bottom: 8px;
-            width: 100%;
         }
 
-        .input-with-copy input {
+        .input-group {
+            display: flex;
             width: 100%;
-            padding: 12px;
-            padding-right: 90px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            padding-right: 75px;
             border: 1px solid var(--border-color);
             border-radius: 4px;
             font-size: 14px;
             background-color: var(--bg-white);
             color: var(--text-dark);
-            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+
+        .input-with-copy {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .input-with-copy input {
+            width: 100%;
+            padding: 10px;
+            padding-right: 75px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
         }
 
         small {
@@ -587,13 +600,15 @@
         
         .toggle-password {
             position: absolute;
-            right: 10px;
-            top: 32px;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
             font-size: 16px;
             color: var(--secondary);
+            z-index: 5;
         }
         
         .save-btn {
@@ -675,20 +690,19 @@
 
         /* JSON Structure styles */
         .json-structure {
-            position: relative;
             margin-bottom: 20px;
         }
         
         .json-structure pre {
             background-color: var(--bg-white);
             padding: 15px;
+            padding-right: 75px;
             border-radius: 5px;
             overflow-x: auto;
             font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
             font-size: 13px;
             line-height: 1.5;
             border: 1px solid var(--border-color);
-            padding-right: 90px;
         }
         
         .json-structure h4 {
@@ -699,20 +713,10 @@
         }
         
         .json-structure .copy-btn {
-            top: 10px;
-            right: 10px;
-            z-index: 10;
-            opacity: 1;
-            padding: 6px 10px;
-            width: auto;
-            min-width: 70px;
+            top: 15px;
+            transform: none;
         }
 
-        .json-structure:hover .copy-btn {
-            opacity: 1;
-        }
-
-        /* Info box styles */
         .info-box {
             background-color: var(--bg-white);
             border-left: 4px solid var(--primary);
@@ -1258,7 +1262,7 @@
             
             // Función para generar la URL del webhook
             const generateWebhookUrl = () => {
-                const currentDomain = window.location.origin;
+                const currentDomain = window.location.origin || 'https://example.com';
                 const webhookUrl = `${currentDomain}/api/webhooks/manychat`;
                 
                 // Actualizar el campo de entrada
@@ -1268,7 +1272,7 @@
             // Función para generar un webhook aleatorio
             const generateRandomWebhook = () => {
                 const randomId = Math.random().toString(36).substring(2, 10);
-                const currentDomain = window.location.origin;
+                const currentDomain = window.location.origin || 'https://example.com';
                 const newWebhookUrl = `${currentDomain}/api/webhooks/manychat/${randomId}`;
                 
                 // Actualizar el campo de entrada
@@ -1287,7 +1291,10 @@
             };
             
             // Botón para generar webhook
-            document.getElementById('generate-webhook').addEventListener('click', generateRandomWebhook);
+            const generateWebhookBtn = document.getElementById('generate-webhook');
+            if (generateWebhookBtn) {
+                generateWebhookBtn.addEventListener('click', generateRandomWebhook);
+            }
             
             // Seleccionar todos los botones de copia
             const copyButtons = document.querySelectorAll('.copy-btn');
@@ -1295,6 +1302,8 @@
             
             // Función para mostrar notificación
             const showNotification = (message) => {
+                if (!notification) return;
+                
                 notification.textContent = message;
                 notification.classList.add('show');
                 
@@ -1304,82 +1313,140 @@
                 }, 2000);
             };
             
+            // Función para copiar texto
+            const copyText = (text) => {
+                // Usar el nuevo API de clipboard si está disponible
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(text)
+                        .then(() => {
+                            showNotification('Copied to clipboard!');
+                            return true;
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                            return false;
+                        });
+                }
+                
+                // Fallback para navegadores que no soportan clipboard API
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                    
+                    if (successful) {
+                        showNotification('Copied to clipboard!');
+                        return true;
+                    }
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    document.body.removeChild(textarea);
+                    return false;
+                }
+                
+                return false;
+            };
+            
             // Agregar evento a cada botón de copia
             copyButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const targetId = button.getAttribute('data-target');
+                    if (!targetId) return;
+                    
                     const targetElement = document.getElementById(targetId);
+                    if (!targetElement) return;
+                    
+                    let textToCopy = '';
                     
                     if (targetElement.tagName.toLowerCase() === 'input') {
-                        // Para elementos input
-                        targetElement.select();
-                        document.execCommand('copy');
+                        textToCopy = targetElement.value;
+                    } else if (targetElement.tagName.toLowerCase() === 'pre') {
+                        textToCopy = targetElement.textContent;
                     } else {
-                        // Para elementos pre (JSON)
-                        const range = document.createRange();
-                        range.selectNode(targetElement);
-                        window.getSelection().removeAllRanges();
-                        window.getSelection().addRange(range);
-                        document.execCommand('copy');
-                        window.getSelection().removeAllRanges();
+                        textToCopy = targetElement.innerText;
                     }
                     
-                    // Mostrar notificación
-                    showNotification('Copied to clipboard!');
+                    copyText(textToCopy);
+                    
+                    // Efecto visual en el botón
+                    button.classList.add('active');
+                    setTimeout(() => {
+                        button.classList.remove('active');
+                    }, 200);
                 });
             });
             
             // Función para probar la conexión con ManyChat
-            document.getElementById('test-manychat').addEventListener('click', function() {
-                const statusElement = document.getElementById('manychat-status');
-                const webhookUrl = document.getElementById('webhook-url').value;
-                const token = document.getElementById('webhook-token').value;
-                
-                if (!webhookUrl || !token) {
-                    statusElement.textContent = 'Error: Please fill in all fields';
-                    statusElement.className = 'connection-error';
-                    return;
-                }
-                
-                // Simular prueba de conexión
-                statusElement.textContent = 'Testing connection...';
-                statusElement.className = '';
-                
-                // Simular respuesta después de 1 segundo
-                setTimeout(() => {
-                    const success = Math.random() > 0.2; // 80% de probabilidad de éxito
+            const testManyChatBtn = document.getElementById('test-manychat');
+            if (testManyChatBtn) {
+                testManyChatBtn.addEventListener('click', function() {
+                    const statusElement = document.getElementById('manychat-status');
+                    if (!statusElement) return;
                     
-                    if (success) {
-                        statusElement.textContent = 'Connection successful!';
-                        statusElement.className = 'connection-success';
-                    } else {
-                        statusElement.textContent = 'Connection failed. Please check your URL and token.';
+                    const webhookUrl = document.getElementById('webhook-url')?.value || '';
+                    const token = document.getElementById('webhook-token')?.value || '';
+                    
+                    if (!webhookUrl || !token) {
+                        statusElement.textContent = 'Error: Please fill in all fields';
                         statusElement.className = 'connection-error';
+                        return;
                     }
-                }, 1000);
-            });
+                    
+                    // Simular prueba de conexión
+                    statusElement.textContent = 'Testing connection...';
+                    statusElement.className = '';
+                    
+                    // Simular respuesta después de 1 segundo
+                    setTimeout(() => {
+                        const success = Math.random() > 0.2; // 80% de probabilidad de éxito
+                        
+                        if (success) {
+                            statusElement.textContent = 'Connection successful!';
+                            statusElement.className = 'connection-success';
+                        } else {
+                            statusElement.textContent = 'Connection failed. Please check your URL and token.';
+                            statusElement.className = 'connection-error';
+                        }
+                    }, 1000);
+                });
+            }
             
             // Cargar URL del webhook al iniciar
             const savedWebhookUrl = localStorage.getItem('manychat_webhook_url');
-            if (savedWebhookUrl) {
-                document.getElementById('webhook-url').value = savedWebhookUrl;
-            } else {
-                // Si no hay URL guardada, generar una nueva
-                generateWebhookUrl();
+            const webhookUrlInput = document.getElementById('webhook-url');
+            if (webhookUrlInput) {
+                if (savedWebhookUrl) {
+                    webhookUrlInput.value = savedWebhookUrl;
+                } else {
+                    // Si no hay URL guardada, generar una nueva
+                    generateWebhookUrl();
+                }
             }
             
             // Cargar token
             const savedManyChatToken = localStorage.getItem('manychat_token');
-            if (savedManyChatToken) {
-                document.getElementById('webhook-token').value = savedManyChatToken;
+            const webhookTokenInput = document.getElementById('webhook-token');
+            if (webhookTokenInput && savedManyChatToken) {
+                webhookTokenInput.value = savedManyChatToken;
             }
         });
         
         // Función para alternar la visibilidad de la contraseña (global)
         function togglePasswordVisibility(inputId) {
             const input = document.getElementById(inputId);
+            if (!input) return;
+            
             const button = input.nextElementSibling;
+            if (!button) return;
+            
             const icon = button.querySelector('i');
+            if (!icon) return;
             
             if (input.type === 'password') {
                 input.type = 'text';
@@ -1394,18 +1461,20 @@
         
         // Función para guardar configuración de Supabase (global)
         function saveSupabaseConfig() {
-            const url = document.getElementById('supabase-url').value;
-            const key = document.getElementById('supabase-key').value;
-            const table = document.getElementById('supabase-table').value;
+            const url = document.getElementById('supabase-url')?.value || '';
+            const key = document.getElementById('supabase-key')?.value || '';
+            const table = document.getElementById('supabase-table')?.value || 'messages';
             
             if (!url || !key) {
                 const notification = document.getElementById('notification');
-                notification.textContent = 'Please fill in all required fields';
-                notification.classList.add('show');
-                
-                setTimeout(() => {
-                    notification.classList.remove('show');
-                }, 2000);
+                if (notification) {
+                    notification.textContent = 'Please fill in all required fields';
+                    notification.classList.add('show');
+                    
+                    setTimeout(() => {
+                        notification.classList.remove('show');
+                    }, 2000);
+                }
                 return;
             }
             
@@ -1415,19 +1484,23 @@
             localStorage.setItem('supabase_table', table);
             
             const notification = document.getElementById('notification');
-            notification.textContent = 'Supabase configuration saved!';
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 2000);
+            if (notification) {
+                notification.textContent = 'Supabase configuration saved!';
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 2000);
+            }
         }
         
         // Función para probar la conexión con Supabase (global)
         function testSupabaseConnection() {
             const statusElement = document.getElementById('connection-status');
-            const url = document.getElementById('supabase-url').value;
-            const key = document.getElementById('supabase-key').value;
+            if (!statusElement) return;
+            
+            const url = document.getElementById('supabase-url')?.value || '';
+            const key = document.getElementById('supabase-key')?.value || '';
             
             if (!url || !key) {
                 statusElement.textContent = 'Error: Please fill in all required fields';
