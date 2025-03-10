@@ -469,35 +469,50 @@ setInterval(async () => {
 }, 5000);
 
 async function processMessages(messages) {
-  // En una implementación real, aquí procesarías los mensajes con una IA o reglas
+  // Log messages being processed
   console.log(`Procesando ${messages.length} mensajes para ${messages[0].recordid}`);
+  
+  // Consolidate messages in order to send them to the agent
+  const consolidatedMessages = messages.map(msg => ({
+    id: msg.id,
+    recordid: msg.recordid,
+    message: msg.message,
+    sender_name: msg.sender_name || 'Usuario',
+    timestamp: msg.timestamp,
+    metadata: msg.metadata || {}
+  }));
   
   // Comprobar si tenemos configuración de n8n
   if (process.env.N8N_API_URL && process.env.N8N_API_KEY) {
     try {
       console.log('Procesando mensajes con n8n');
       
-      // En producción, realizaríamos una petición HTTP a n8n
-      // Ejemplo:
-      /*
-      const response = await axios.post(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
-        projectName: process.env.N8N_PROJECT_NAME,
-        messages: messages,
-        recordid: messages[0].recordid
-      }, {
+      // Realizar petición HTTP a n8n usando fetch
+      const response = await fetch(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
+        method: 'POST',
         headers: {
           'X-N8N-API-KEY': process.env.N8N_API_KEY,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          projectName: process.env.N8N_PROJECT_NAME || 'Default',
+          action: 'processMessages',
+          messages: consolidatedMessages,
+          recordid: messages[0].recordid,
+          messageIds: messages.map(m => m.id)
+        })
       });
       
-      return response.data.response || "Mensaje procesado por n8n";
-      */
+      if (!response.ok) {
+        throw new Error(`Error en la respuesta: ${response.status} ${response.statusText}`);
+      }
       
-      // Simulación de respuesta de n8n
-      return `Mensaje procesado por n8n (Proyecto: ${process.env.N8N_PROJECT_NAME || 'Default'})`;
+      const data = await response.json();
+      console.log('Respuesta de n8n:', data);
+      return data.response || "Mensaje procesado por n8n";
     } catch (error) {
       console.error('Error al procesar con n8n:', error);
+      console.error('Detalles del error:', error.message);
       return "Error al procesar con n8n. Un agente te responderá pronto.";
     }
   }
@@ -507,45 +522,8 @@ async function processMessages(messages) {
 }
 
 async function sendResponse(recordid, response) {
-  // Aquí envías la respuesta al sistema original (ej. ManyChat)
   try {
-    console.log(`Respuesta a ${recordid}: ${response}`);
-    
-    // En una implementación real, aquí realizaríamos una petición HTTP a ManyChat o n8n
-    // Ejemplo:
-    /*
-    // Si tenemos configuración para n8n, enviar a través de n8n
-    if (process.env.N8N_API_URL && process.env.N8N_API_KEY) {
-      await axios.post(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
-        projectName: process.env.N8N_PROJECT_NAME,
-        action: 'sendResponse',
-        recordid,
-        response
-      }, {
-        headers: {
-          'X-N8N-API-KEY': process.env.N8N_API_KEY,
-          'Content-Type': 'application/json'
-        }
-      });
-    } else {
-      // Si no, intentar enviar directamente a ManyChat
-      await axios.post('https://api.manychat.com/fb/sending/sendContent', {
-        subscriber_id: recordid,
-        content: {
-          messages: [
-            {
-              type: 'text',
-              text: response
-            }
-          ]
-        }
-      }, {
-        headers: {
-          'Authorization': 'Bearer YOUR_MANYCHAT_API_KEY'
-        }
-      });
-    }
-    */
+    console.log(`Enviando respuesta a ${recordid}: ${response}`);
     
     // Guardar respuesta en Supabase para el registro
     const tableName = process.env.SUPABASE_TABLE || 'messages';
@@ -557,9 +535,63 @@ async function sendResponse(recordid, response) {
       sender: 'system'
     }]);
     
+    // Si tenemos configuración para n8n, enviar a través de n8n
+    if (process.env.N8N_API_URL && process.env.N8N_API_KEY) {
+      const sendResult = await fetch(`${process.env.N8N_API_URL}/webhook/${process.env.N8N_WORKFLOW_ID}`, {
+        method: 'POST',
+        headers: {
+          'X-N8N-API-KEY': process.env.N8N_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          projectName: process.env.N8N_PROJECT_NAME || 'Default',
+          action: 'sendResponse',
+          recordid,
+          response
+        })
+      });
+      
+      if (!sendResult.ok) {
+        throw new Error(`Error en la respuesta: ${sendResult.status} ${sendResult.statusText}`);
+      }
+      
+      const resultData = await sendResult.json();
+      console.log('Resultado de envío a n8n:', resultData);
+    } else if (process.env.MANYCHAT_API_KEY) {
+      // Si no, intentar enviar directamente a ManyChat si tenemos la API key
+      const sendResult = await fetch('https://api.manychat.com/fb/sending/sendContent', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.MANYCHAT_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subscriber_id: recordid,
+          content: {
+            messages: [
+              {
+                type: 'text',
+                text: response
+              }
+            ]
+          }
+        })
+      });
+      
+      if (!sendResult.ok) {
+        throw new Error(`Error en la respuesta: ${sendResult.status} ${sendResult.statusText}`);
+      }
+      
+      const resultData = await sendResult.json();
+      console.log('Resultado de envío a ManyChat:', resultData);
+    } else {
+      console.log('No hay configuración para enviar respuestas. Solo se guardó en la base de datos.');
+    }
+    
     return true;
   } catch (error) {
     console.error('Error al enviar respuesta:', error);
+    console.error('Detalles del error:', error.message);
     return false;
   }
 }
