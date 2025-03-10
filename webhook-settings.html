@@ -65,8 +65,8 @@
         }
         
         header {
-            background-color: var(--primary);
-            color: white;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
             padding: 20px;
             text-align: center;
             margin-bottom: 30px;
@@ -75,9 +75,31 @@
             position: relative;
         }
         
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0;
+        }
+
+        .logo-text {
+            font-family: var(--font-primary);
+            font-weight: 700;
+            font-size: 28px;
+            color: var(--logo-primary);
+            text-align: center;
+            background-color: rgba(26, 115, 232, 0.1);
+            padding: 5px 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px var(--logo-shadow);
+            margin-right: 15px;
+            letter-spacing: 1px;
+        }
+
         header h1 {
             margin: 0;
             font-size: 2rem;
+            color: var(--text-dark);
             text-align: center;
             display: flex;
             align-items: center;
@@ -85,13 +107,8 @@
         }
 
         header h1::before {
-            content: "M5V";
-            font-weight: 700;
-            color: var(--primary);
-            margin-right: 10px;
-            background-color: rgba(26, 115, 232, 0.1);
-            padding: 5px 10px;
-            border-radius: 4px;
+            content: "";
+            display: none;
         }
 
         .back-link {
@@ -202,7 +219,7 @@
         }
 
         .copy-btn i {
-            margin-right: 0;
+            margin-right: 5px;
         }
 
         .copy-btn:hover {
@@ -444,11 +461,16 @@
         }
         
         .btn.secondary {
-            background-color: var(--secondary);
+            background-color: #5f6368;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
         }
         
         .btn.secondary:hover {
             background-color: #4a4e52;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
         
         .btn.success {
@@ -579,13 +601,13 @@
             font-size: 14px;
             margin-top: 10px;
             font-weight: 500;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            transition: all 0.25s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .save-btn:hover {
             background-color: #0b5fca;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
         
@@ -604,13 +626,13 @@
             font-size: 14px;
             margin-top: 15px;
             font-weight: 500;
-            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            transition: all 0.25s ease;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .test-btn:hover {
             background-color: #4a4e52;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
         
@@ -723,12 +745,67 @@
             text-align: center;
             margin-left: 10px;
         }
+
+        /* Mejorar los estilos de los botones secundarios */
+        .btn.secondary {
+            background-color: #5f6368;
+            color: white;
+            border: none;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn.secondary:hover {
+            background-color: #4a4e52;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mejorar los estilos de los botones de acción API */
+        .api-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .api-actions .btn {
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Añadir estilos para los botones de input-group */
+        .input-group {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: var(--bg-white);
+            color: var(--text-dark);
+        }
+
+        .input-group .copy-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
             <div class="logo-container">
+                <span class="logo-text">M5V</span>
                 <h1>Webhook Configuration</h1>
             </div>
             <a href="index.html" class="back-link">← Back to Dashboard</a>
@@ -754,7 +831,7 @@
                     <label for="webhook-token">Authentication Token:</label>
                     <div class="input-group">
                         <input type="text" id="webhook-token" class="form-control" value="mc_12345" readonly>
-                        <button class="copy-btn" data-target="webhook-token">Copy</button>
+                        <button class="copy-btn" data-target="webhook-token"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                 </div>
                 
@@ -785,7 +862,7 @@
     "flow_id": "{{flow_id}}"
   }
 }</pre>
-                        <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="request-json"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="json-structure">
                         <h4>Response Format (System to ManyChat):</h4>
@@ -799,7 +876,7 @@
   "action": "process_request",
   "status": "pending"
 }</pre>
-                        <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="response-json"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <small>Use these JSON structures as reference for your webhook integration. ManyChat variables like {{user_id}} will be replaced with actual values.</small>
                 </div>
@@ -880,7 +957,7 @@
     ]
   }
 }</pre>
-                        <button class="copy-btn" data-target="send-message-example"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="send-message-example"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <div class="json-structure">
                         <h4>Add Tag to Subscriber:</h4>
@@ -888,7 +965,7 @@
   "subscriber_id": "subscriber_id_here",
   "tag_name": "your_tag_name"
 }</pre>
-                        <button class="copy-btn" data-target="add-tag-example"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="add-tag-example"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                 </div>
                 
@@ -979,7 +1056,7 @@
   "payload": null,
   "description": "quiz game with random questions"
 }</pre>
-                        <button class="copy-btn" data-target="pokemon-json-app"><i class="fas fa-copy"></i></button>
+                        <button class="copy-btn" data-target="pokemon-json-app"><i class="fas fa-copy"></i> Copy</button>
                     </div>
                     <small>This example shows how to integrate with the Pokémon API to fetch a list of Pokémon and their details. You can use this as a template for your own custom integrations.</small>
                 </div>
