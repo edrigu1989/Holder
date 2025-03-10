@@ -249,18 +249,21 @@
         }
         
         .card {
-            background-color: var(--bg-white);
+            background-color: rgba(32, 58, 67, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 8px;
             box-shadow: var(--card-shadow);
             padding: 20px;
             margin-bottom: 30px;
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            color: var(--text-color);
         }
         
         .card h2 {
-            color: var(--primary);
+            color: var(--accent-color);
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid rgba(79, 172, 254, 0.2);
         }
         
         .status-indicator {
@@ -1445,11 +1448,11 @@
                 createWave(background);
             }
             
-            // Crear partículas
-            const numParticles = Math.floor(window.innerWidth / 10);
-            for (let i = 0; i < numParticles; i++) {
-                createParticle(background);
-            }
+            // Ya no creamos partículas
+            // const numParticles = Math.floor(window.innerWidth / 10);
+            // for (let i = 0; i < numParticles; i++) {
+            //     createParticle(background);
+            // }
         }
         
         // Función para crear una onda

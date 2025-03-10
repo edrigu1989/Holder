@@ -158,10 +158,13 @@
             width: 100%;
             max-width: 400px;
             padding: 40px;
-            background-color: var(--bg-white);
+            background-color: rgba(32, 58, 67, 0.7);
+            backdrop-filter: blur(10px);
             border-radius: 8px;
             box-shadow: var(--card-shadow);
             text-align: center;
+            border: 1px solid rgba(79, 172, 254, 0.2);
+            color: var(--text-color);
         }
         
         .logo-container {
@@ -180,7 +183,7 @@
         }
         
         h1 {
-            color: var(--primary);
+            color: var(--accent-color);
             margin-bottom: 30px;
             font-weight: 500;
         }
@@ -193,7 +196,7 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: var(--secondary);
+            color: var(--text-color);
             font-weight: 500;
         }
         
@@ -247,7 +250,7 @@
         .form-footer {
             margin-top: 30px;
             font-size: 14px;
-            color: var(--secondary);
+            color: var(--text-color);
         }
         
         .toggle-password {
@@ -367,11 +370,11 @@
                 createWave(background);
             }
             
-            // Crear partículas
-            const numParticles = Math.floor(window.innerWidth / 10);
-            for (let i = 0; i < numParticles; i++) {
-                createParticle(background);
-            }
+            // Ya no creamos partículas
+            // const numParticles = Math.floor(window.innerWidth / 10);
+            // for (let i = 0; i < numParticles; i++) {
+            //     createParticle(background);
+            // }
         }
         
         // Función para crear una onda

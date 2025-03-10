@@ -1670,11 +1670,11 @@
                 createWave(background);
             }
             
-            // Crear partículas
-            const numParticles = Math.floor(window.innerWidth / 10);
-            for (let i = 0; i < numParticles; i++) {
-                createParticle(background);
-            }
+            // Ya no creamos partículas
+            // const numParticles = Math.floor(window.innerWidth / 10);
+            // for (let i = 0; i < numParticles; i++) {
+            //     createParticle(background);
+            // }
         }
         
         // Función para crear una onda
@@ -1695,33 +1695,6 @@
             wave.style.animationDelay = `-${delay}s`;
             
             parent.appendChild(wave);
-        }
-        
-        // Función para crear una partícula
-        function createParticle(parent) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            
-            // Tamaño aleatorio entre 2 y 6 píxeles
-            const size = Math.random() * 4 + 2;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            
-            // Posición aleatoria
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            particle.style.left = `${posX}%`;
-            particle.style.top = `${posY}%`;
-            
-            // Duración de la animación (entre 5 y 15 segundos)
-            const duration = Math.random() * 10 + 5;
-            particle.style.animationDuration = `${duration}s`;
-            
-            // Retraso aleatorio para que no todas empiecen al mismo tiempo
-            const delay = Math.random() * 15;
-            particle.style.animationDelay = `${delay}s`;
-            
-            parent.appendChild(particle);
         }
         
         // Ajustar el fondo cuando cambia el tamaño de la ventana
